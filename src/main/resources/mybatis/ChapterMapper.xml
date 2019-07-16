@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.luffy.comic.mapper.ChapterMapper">
+    <cache/>
+    <update id="update" useGeneratedKeys="true" keyProperty="id">
+        update chapter
+        <set>
+            <if test="comic.id != null">comic_id = #{comic.id},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="pages != null">pages = #{pages},</if>
+            <if test="suffix != null">suffix = #{suffix},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id">
+        insert into chapter values (0, #{comic.id}, #{title}, #{pages}, #{suffix})
+        on duplicate key update
+        <if test="comic.id != null">comic_id = #{comic.id},</if>
+        <if test="pages != null">pages = #{pages},</if>
+        <if test="suffix != null">suffix = #{suffix}</if>
+    </insert>
+
+    <insert id="insertOrUpdateBatch">
+        insert into chapter (comic_id, title, pages, suffix) values
+        <foreach collection="list" item="chapter" index="index" separator=",">
+            (#{chapter.comic.id}, #{chapter.title}, #{chapter.pages}, #{chapter.suffix})
+        </foreach>
+        on duplicate key update comic_id = values(comic_id), pages = values(pages), suffix = values(suffix)
+    </insert>
+</mapper>

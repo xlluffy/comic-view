@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.luffy.comic.mapper.ComicMapper">
+    <cache/>
+
+    <update id="update" useGeneratedKeys="true" keyProperty="id">
+        update comic
+        <set>
+            <if test="title != null">title = #{title} ,</if>
+            <if test="fullTitle != null">full_title = #{fullTitle},</if>
+            <if test="author != null">author = #{author},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateByTitle" useGeneratedKeys="true" keyProperty="id">
+        update comic
+        <set>
+            <if test="fullTitle != null">full_title = #{fullTitle},</if>
+            <if test="author != null">author = #{author},</if>
+        </set>
+        where title = #{title}
+    </update>
+
+    <insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id">
+        insert into comic (title, full_title, author)
+        values (#{title}, #{fullTitle}, #{author})
+        on duplicate key update full_title = #{fullTitle},
+                                author     = #{author}
+    </insert>
+
+    <insert id="insertOrUpdateBatch" useGeneratedKeys="true" keyProperty="id">
+        insert into comic(title, full_title, author) values
+        <foreach collection="list" item="comic" index="index" separator=",">
+            (#{comic.title}, #{comic.fullTitle}, #{comic.author})
+        </foreach>
+        on duplicate key update full_title = values(full_title), author = values(author)
+    </insert>
+</mapper>

@@ -1,0 +1,97 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="/static/stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/stylesheets/chapter.css">
+
+    <title th:text="${chapter.title}+'卷'"></title>
+</head>
+<body>
+
+<div class="container-fluid" id="container" th:object="${chapter}">
+    <div class="text-center row justify-content-center mt-2 mb-5" id="header">
+        <button type="button" class="btn btn-info" th:if="${prev_chapter}"
+                th:onclick="'javascript:location.href=&quot/chapter/' + ${prev_chapter}+'&quot'">
+            上一卷
+        </button>
+        <button type="button" class="ml-5 btn btn-info"
+                th:onclick="'javascript:location.href=&quot/comic/index&quot'">
+            目录
+        </button>
+        <button type="button" class="ml-5 btn btn-info" th:if="${next_chapter}"
+                th:onclick="'javascript:location.href=&quot/chapter/' + ${next_chapter}+'&quot'">
+            下一卷
+        </button>
+    </div>
+
+    <div class="text-center" id="main_pages">
+        <div class="header mb-4" id="page-header">
+            <h2 th:text="*{comic.title}+' 第'+*{title}+'卷'"></h2>
+        </div>
+        <!--<div class="page" th:each="now : ${#numbers.sequence(1, 20)}" th:id="${now}">-->
+        <!--<img th:src="|/static/*{title}/${#numbers.formatInteger(now, 3)}*{suffix}|" class="border border-secondary rounded mt-2 mb-2"-->
+        <!--th:alt="|${#numbers.formatInteger(now, 3)}*{suffix}|">-->
+        <!--<br />-->
+        <!--<span class="text-secondary" th:text="|${now}/*{pages}|"></span>-->
+        <!--</div>-->
+    </div>
+
+    <div class="text-center justify-content-center mt-5 mb-5" hidden id="page_footer">
+        <button type="button" class="btn btn-info" th:if="${prev_chapter}"
+                th:onclick="'javascript:location.href=&quot/chapter/' + ${prev_chapter}+'&quot'">
+            上一卷
+        </button>
+        <button type="button" class="ml-5 btn btn-info" th:if="${next_chapter}"
+                th:onclick="'javascript:location.href=&quot/chapter/' + ${next_chapter}+'&quot'">
+            下一卷
+        </button>
+    </div>
+
+    <span id="clock"></span>
+
+    <div class="input-group" style="width:125px;" id="goto">
+        <!--<div class="input-group-prepend">-->
+        <!--<div class="input-group-text" id="btnGroupAddon">@</div>-->
+        <!--</div>-->
+        <input type="search" class="form-control" placeholder="页数" id="input-btn"/>
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" id="btn-goto">Goto</button>
+        </div>
+    </div>
+
+    <div id="menu">
+        <div class="row">
+            <div class="text-center btn-group" id="menu_content" role="group">
+                <button type="button" class="btn btn-danger" th:if="${prev_chapter}"
+                        th:onclick="'javascript:location.href=&quot/chapter/' + ${prev_chapter}+'&quot'">
+                    上一卷
+                </button>
+                <button type="button" class="btn btn-danger"
+                        th:onclick="'javascript:location.href=&quot/comic/index&quot'">
+                    目录
+                </button>
+                <button type="button" class="btn btn-danger" th:if="${next_chapter}"
+                        th:onclick="'javascript:location.href=&quot/chapter/' + ${next_chapter}+'&quot'">
+                    下一卷
+                </button>
+            </div>
+            <img src="/static/images/list-unordered.svg" alt="" id="menu_icon" style="height: 32px; width: 24px;">
+        </div>
+    </div>
+</div>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
+<script src="/static/scripts/bootstrap.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    let chapter = /*[[${chapter}]]*/null;
+    /*]]>*/
+</script>
+<script src="/static/scripts/tools.js"></script>
+<script src="/static/scripts/chapter.js"></script>
+</body>
+</html>

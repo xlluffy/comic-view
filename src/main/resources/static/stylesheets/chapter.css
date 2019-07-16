@@ -1,0 +1,37 @@
+body {
+    background-color: rgb(245, 245, 245);
+}
+
+#menu {
+    position: fixed;
+    right: 15px;
+    bottom: 60px;
+}
+
+#menu > img {
+    width: 24px;
+    height: 32px;
+    cursor: pointer;
+}
+
+#menu_content {
+    display: none;
+}
+
+#goto {
+    position: fixed;
+    right: 15px;
+    top: 150px;
+}
+
+#clock {
+    position: fixed;
+    left: 15px;
+    bottom: 10px;
+}
+
+.page-img {
+    border-width: .2rem;
+    box-shadow: 4px 4px 5px #aaaaaa, -3px -3px 5px #aaaaaa;
+    /*filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, .5));*/
+}

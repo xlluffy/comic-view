@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.luffy.comic.mapper.RecordMapper">
+    <cache/>
+
+    <select id="findByChapters" resultMap="recordMapper">
+        select * from record where chapter_id in
+        <foreach collection="list" item="chapter" index="index" open="(" separator="," close=")">
+            #{chapter.id}
+        </foreach>
+    </select>
+
+    <update id="updateByChapterId" useGeneratedKeys="true" keyProperty="id">
+        update record
+        <set>
+            <if test="page != null">page = #{page},</if>
+            <if test="suffix != null">suffix = #{suffix},</if>
+        </set>
+        where chapter_id = #{chapter.id}
+    </update>
+</mapper>

@@ -1,0 +1,92 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="/static/stylesheets/bootstrap.min.css">
+
+    <title>Title</title>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 d-none d-md-block bg-dark sidebar">
+            <div class="nav flex-column mt-5" th:object="${record}" th:if="${record}">
+                <a class="nav-link mt-5" th:href="'/chapter/'+*{chapter.id}+'?page='+*{page}">
+                    <img th:src="|/static/${comic.title}/*{chapter.title}/*{page}*{suffix}|"
+                         th:alt="|*{chapter.title}/*{page}*{suffix}|"
+                         class="img-thumbnail card-img-top" id="img-recent">
+                </a>
+                <span class="text-center text-light" th:text="|最近阅读: ${record.chapter.title}卷${record.page}页|"></span>
+            </div>
+        </div>
+
+        <div class="col-md-10">
+            <header class="text-center">
+                <h2 class="mb-4" th:text="${comic.title}"></h2>
+                <span th:text="|最近阅读: ${record.chapter.title}卷${record.page}页|"></span>
+            </header>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-end">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">Previous</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="row justify-content-center" id="cards">
+                <div class="col-2 mt-3 ml-4" th:each="chapter : ${chapters}" th:object="${chapter}">
+                    <!--<div class="card" th:if="${#maps.containsKey(all_records, chapter.id)}">
+                        <a th:href="'/chapter/'+*{id}">
+                            <img th:src="|/static/${comic.title}/*{title}/${all_records[chapter.id]}*{suffix}|"
+                                 th:alt="|/${comic.title}/*{title}/${all_records[chapter.id]}*{suffix}|"
+                                 class="img-thumbnail card-img-top" th:id="*{title}"
+                                 style="height: 283px" />
+                        </a>
+                        <div class="card-body">
+                            <span class="card-text text-center" th:text="*{title}+'卷'"></span>
+                            <a th:href="'/chapter/'+*{id}+'?page='+${all_records[chapter.id]}"
+                               class="btn btn-outline-danger float-right btn-sm " data-toggle="tooltip" data-placement="top"
+                               th:title="'第'+${all_records[chapter.id]}+'页'">
+                                Recent</a>
+                        </div>
+                    </div>-->
+
+                    <div class="card">
+                        <a th:href="'/chapter/'+*{id}+'?page='+${all_records[chapter.id]}"
+                           th:if="${#maps.containsKey(all_records, chapter.id)}">
+                            <img th:src="|/static/${comic.title}/*{title}/${all_records[chapter.id]}*{suffix}|"
+                                 th:alt="|/${comic.title}/*{title}/${all_records[chapter.id]}*{suffix}|"
+                                 class="img-thumbnail card-img-top" th:id="*{title}"
+                                 style="height: 283px"/>
+                        </a>
+                        <a th:href="'/chapter/'+*{id}"
+                           th:if="not ${#maps.containsKey(all_records, chapter.id)}">
+                            <img th:src="|/static/${comic.title}/*{title}/001*{suffix}|"
+                                 th:alt="|/${comic.title}/*{title}/001*{suffix}|"
+                                 class="img-thumbnail card-img-top" th:id="*{title}"
+                                 style="height: 283px"/>
+                        </a>
+
+                        </a>
+                        <div class="card-body">
+                            <p class="card-text text-center" th:text="*{title}+'卷'"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
+<script src="/static/scripts/bootstrap.min.js"></script>
+</body>
+</html>
