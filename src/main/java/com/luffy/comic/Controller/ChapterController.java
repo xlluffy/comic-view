@@ -42,6 +42,7 @@ public class ChapterController {
 
     @GetMapping("/{id}")
     public String getChapter(@PathVariable int id, @RequestParam(name = "page", defaultValue = "1") int page, Model model) {
+        model.addAttribute("comic_id", id);
         model.addAttribute("chapter", chapterService.findById(id));
         model.addAttribute("prev_chapter", chapterService.findPrevIdById(id));
         model.addAttribute("next_chapter", chapterService.findNextIdById(id));
