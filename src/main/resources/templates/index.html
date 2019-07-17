@@ -17,15 +17,19 @@
                          th:alt="|*{chapter.title}/*{page}*{suffix}|"
                          class="img-thumbnail card-img-top" id="img-recent">
                 </a>
-                <span class="text-center text-light" th:if="${last_record}"
-                      th:text="|最近阅读: ${last_comic.title} *{chapter.title}卷 *{page}页|"></span>
+                <div class="text-center text-light" th:if="${last_record}">
+                    <p>最近阅读：</p>
+                    <p th:text="${last_comic.title}"></p>
+                    <p th:text="|*{chapter.title}卷|"></p>
+                    <p th:text="|*{page}页|"></p>
+                </div>
             </div>
         </div>
 
         <div class="col-md-10">
             <header class="text-center">
                 <h2 class="mb-4">目录</h2>
-                <span th:text="|最近阅读: ${last_comic.title} ${last_record.chapter.title}卷 ${last_record.page}页|"></span>
+                <span th:text="|最近阅读: ${last_comic.title} - ${last_record.chapter.title}卷 - ${last_record.page}页|"></span>
             </header>
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-end">
