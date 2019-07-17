@@ -18,7 +18,7 @@
                          class="img-thumbnail card-img-top" id="img-recent">
                 </a>
                 <span class="text-center text-light" th:if="${last_record}"
-                      th:text="|最近阅读: *{chapter.title}卷*{page}页|"></span>
+                      th:text="|最近阅读: ${last_comic.title} *{chapter.title}卷 *{page}页|"></span>
             </div>
         </div>
 

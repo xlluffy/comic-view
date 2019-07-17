@@ -131,7 +131,7 @@ public class ComicController {
             }
         }
         model.addAttribute("all_records", allRecords);
-        model.addAttribute("last_record", recordService.findLastOne());
+        model.addAttribute("last_record", recordService.findLastOneByComicId(comic.getId()));
         return "comic";
     }
 

@@ -15,12 +15,13 @@ public interface RecordMapper {
     })
     Record findByChapterId(Integer chapterId);
 
-    @Select("select *, max(last_update) from record")
+    @Select("select * from record where last_update = (select max(last_update) from record)")
     @ResultMap("recordMapper")
     Record findLastOne();
 
-    @Select("select *, max(last_update) from record, chapter where record.chapter_id = chapter.id and " +
-            "chapter.comic_id = #{comicId}")
+    @Select("select * from record as a where a.last_update = " +
+            "(select max(r.last_update) from record as r, chapter as c " +
+            "where c.comic_id = #{comicId} and r.chapter_id = c.id) group by a.last_update")
     @ResultMap("recordMapper")
     Record findLastOneByComicId(Integer comicId);
 
