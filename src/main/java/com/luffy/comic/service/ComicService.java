@@ -14,6 +14,8 @@ public interface ComicService {
 
     PageInfo<Comic> findByPage(Integer pageNum, Integer pageSize);
 
+    Comic findByChapterId(Integer chapterId);
+
     int count();
 
     void insert(Comic comic);

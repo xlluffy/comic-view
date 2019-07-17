@@ -17,6 +17,10 @@ public interface ComicMapper {
     @ResultMap("comicMapper")
     Comic findByTitle(String title);
 
+    @Select("select comic.* from comic, chapter where chapter.id = #{chapterId} and chapter.comic_id = comic.id")
+    @ResultMap("comicMapper")
+    Comic findByChapterId(Integer chapterId);
+
     @Select("select * from comic")
     @ResultMap("comicMapper")
     List<Comic> findAll();

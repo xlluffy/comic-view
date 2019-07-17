@@ -2,6 +2,7 @@ package com.luffy.comic.service;
 
 import com.github.pagehelper.PageInfo;
 import com.luffy.comic.model.Chapter;
+import com.luffy.comic.model.Comic;
 import com.luffy.comic.model.Record;
 
 import java.util.List;
@@ -18,6 +19,8 @@ public interface RecordService {
     Record findLastOne();
 
     Record findLastOneByComicId(Integer comicId);
+
+    List<Record> findLastOneByComics(List<Comic> comics);
 
     boolean updateByChapterId(Record record);
 

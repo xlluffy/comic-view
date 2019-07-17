@@ -24,16 +24,16 @@ public interface RecordMapper {
     @ResultMap("recordMapper")
     Record findLastOneByComicId(Integer comicId);
 
+    @Select("select * from record where id in (select max(id) from record group by title)")
+    @ResultMap("recordMapper")
+    List<Record> findAllLastOne();
+
     @Select("select * from record, chapter where record.chapter_id = chapter.id " +
             "and chapter.comic_id = #{comicId}")
     @ResultMap("recordMapper")
     List<Record> findByComicId(Integer comicId);
 
     List<Record> findByChapters(List<Chapter> chapters);
-
-    @Select("select * from record where id in (select max(id) from record group by title)")
-    @ResultMap("recordMapper")
-    List<Record> findAllLastOne();
 
     @Select("select * from record")
     @ResultMap("recordMapper")

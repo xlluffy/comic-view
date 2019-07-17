@@ -39,8 +39,20 @@ public class ComicController {
     public String index(@RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
                         @RequestParam(name = "pageSize", defaultValue = "20") int pageSize,
                         Model model) {
-        model.addAttribute("comics", comicService.findByPage(pageNum, pageSize).getList());
-        model.addAttribute("last_record", recordService.findLastOne());
+        List<Comic> comics = comicService.findByPage(pageNum, pageSize).getList();
+        model.addAttribute("comics", comics);
+
+        Map<Integer, Record> allRecords = new HashMap<>();
+        if (comics != null && comics.size() > 0) {
+            List<Record> records = recordService.findLastOneByComics(comics);
+            for (int i = 0; i < comics.size(); ++i) {
+                allRecords.put(comics.get(i).getId(), records.get(i));
+            }
+        }
+        Record lastRecord = recordService.findLastOne();
+        model.addAttribute("last_record", lastRecord);
+        model.addAttribute("last_comic", comicService.findByChapterId(lastRecord.getChapter().getId()));
+        model.addAttribute("all_records", allRecords);
         return "index";
     }
 
@@ -112,14 +124,14 @@ public class ComicController {
         List<Chapter> chapters = chapterService.findByComicIdByPage(id, pageNum, pageSize).getList();
         model.addAttribute("chapters", chapters);
 
-        Map<Integer, String> all_records = new HashMap<>();
+        Map<Integer, String> allRecords = new HashMap<>();
         if (chapters != null && chapters.size() > 0) {
             for (Record record : recordService.findByChapters(chapters)) {
-                all_records.put(record.getChapter().getId(), record.getPage());
+                allRecords.put(record.getChapter().getId(), record.getPage());
             }
         }
-        model.addAttribute("all_records", all_records);
-        model.addAttribute("record", recordService.findLastOneByComicId(id));
+        model.addAttribute("all_records", allRecords);
+        model.addAttribute("last_record", recordService.findLastOne());
         return "comic";
     }
 

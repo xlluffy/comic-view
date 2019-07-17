@@ -44,6 +44,11 @@ public class ComicServiceImpl implements ComicService {
     }
 
     @Override
+    public Comic findByChapterId(Integer chapterId) {
+        return comicMapper.findByChapterId(chapterId);
+    }
+
+    @Override
     public int count() {
         return comicMapper.count();
     }
