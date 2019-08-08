@@ -1,4 +1,4 @@
-package com.luffy.comic.Controller;
+package com.luffy.comic.controller;
 
 import com.luffy.comic.mapper.RecordMapper;
 import org.junit.Test;

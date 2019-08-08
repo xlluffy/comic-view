@@ -23,7 +23,7 @@ function image_click() {
 
 function appendPage(container, id) {
     let page = $("<div class='page' id='{0}'>".format(id));
-    let img = $("<img src='/static/{0}/{1}/{2}{3}' alt='/{0}/{1}/{2}{3}' class='page-img border border-light rounded mt-2 mb-2' "
+    let img = $("<img src='/{0}/{1}/{2}{3}' alt='/{0}/{1}/{2}{3}' class='page-img border border-light rounded mt-2 mb-2' "
             .format(chapter.comic.title, chapter.title, id.format(3), chapter.suffix) +
         "ondblclick='image_click()'/>");
     let footer = $("<span class='footer text-secondary'>{0}/{1}</span>".format(id, chapter.pages));

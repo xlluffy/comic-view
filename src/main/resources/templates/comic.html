@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" type="text/css" href="/static/stylesheets/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap.css">
 
     <title th:text="${comic.title}"></title>
 </head>
@@ -13,7 +13,7 @@
         <div class="col-md-2 d-none d-md-block bg-dark sidebar">
             <div class="nav flex-column mt-5" th:object="${last_record}" th:if="${last_record}">
                 <a class="nav-link mt-5" th:href="'/chapter/'+*{chapter.id}+'?page='+*{page}">
-                    <img th:src="|/static/${comic.title}/*{chapter.title}/*{page}*{suffix}|"
+                    <img th:src="|/${comic.title}/*{chapter.title}/*{page}*{suffix}|"
                          th:alt="|*{chapter.title}/*{page}*{suffix}|"
                          class="img-thumbnail card-img-top" id="img-recent">
                 </a>
@@ -48,14 +48,14 @@
                     <div class="card">
                         <a th:href="'/chapter/'+*{id}+'?page='+${all_records[chapter.id]}"
                            th:if="${#maps.containsKey(all_records, chapter.id)}">
-                            <img th:src="|/static/${comic.title}/*{title}/${all_records[chapter.id]}*{suffix}|"
+                            <img th:src="|/${comic.title}/*{title}/${all_records[chapter.id]}*{suffix}|"
                                  th:alt="|/${comic.title}/*{title}/${all_records[chapter.id]}*{suffix}|"
                                  class="img-thumbnail card-img-top" th:id="*{title}"
                                  style="height: 283px"/>
                         </a>
                         <a th:href="'/chapter/'+*{id}"
                            th:if="not ${#maps.containsKey(all_records, chapter.id)}">
-                            <img th:src="|/static/${comic.title}/*{title}/001*{suffix}|"
+                            <img th:src="|/${comic.title}/*{title}/001*{suffix}|"
                                  th:alt="|/${comic.title}/*{title}/001*{suffix}|"
                                  class="img-thumbnail card-img-top" th:id="*{title}"
                                  style="height: 283px"/>
@@ -76,14 +76,14 @@
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
-<script src="/static/scripts/bootstrap.min.js"></script>
+<script src="/scripts/bootstrap.min.js"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
     let chapters = /* [[${chapters} ]]*/null;
     let all_records = /*[[ ${all_records} ]]*/null;
     /*]]>*/
 </script>
-<script src="/static/scripts/tools.js"></script>
-<script src="/static/scripts/comic.js"></script>
+<script src="/scripts/tools.js"></script>
+<script src="/scripts/comic.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-package com.luffy.comic.Controller;
+package com.luffy.comic.controller;
 
 import com.luffy.comic.model.Chapter;
 import com.luffy.comic.model.Comic;
@@ -7,6 +7,8 @@ import com.luffy.comic.service.ChapterService;
 import com.luffy.comic.service.ComicService;
 import com.luffy.comic.service.RecordService;
 import com.luffy.comic.tools.Tools;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import java.util.Map;
 
 import static com.luffy.comic.tools.Tools.transToPath;
 
+@Api(tags = "ComicController", description = "漫画管理")
 @Controller
 @RequestMapping("/comic")
 public class ComicController {
@@ -35,7 +38,9 @@ public class ComicController {
     @Autowired
     private RecordService recordService;
 
+    @ApiOperation("获取漫画列表")
     @GetMapping("/index")
+//    @PreAuthorize("hasAuthority('comic:comic:read')")
     public String index(@RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
                         @RequestParam(name = "pageSize", defaultValue = "20") int pageSize,
                         Model model) {
@@ -81,15 +86,19 @@ public class ComicController {
         }
     }
 
+    @ApiOperation("添加漫画")
     @GetMapping("/add")
     @ResponseBody
+//    @PreAuthorize("hasAuthority('comic:comic:create')")
     public String addComic(@RequestParam String title) {
         addComic1(title);
         return "Add comic " + title + " succeed";
     }
 
+    @ApiOperation("删除漫画")
     @DeleteMapping("/delete")
     @ResponseBody
+//    @PreAuthorize("hasAuthority('comic:comic:delete')")
     public String deleteComic(@RequestParam String title, @RequestParam(name = "id", defaultValue = "0") int id) {
         if (id > 0) {
             comicService.deleteById(id);
@@ -99,8 +108,10 @@ public class ComicController {
         return "";
     }
 
+    @ApiOperation("根据本地目录更新漫画")
     @GetMapping("/update")
     @ResponseBody
+//    @PreAuthorize("hasAuthority('comic:comic:update')")
     public String updateComics() {
         String[] comics = new File(root).list();
         if (comics != null) {
@@ -111,7 +122,9 @@ public class ComicController {
         return "Update succeed.";
     }
 
+    @ApiOperation("根据漫画id获取漫画章节")
     @GetMapping("/{id}")
+//    @PreAuthorize("hasAuthority('comic:comic:read')")
     public String getComic(@PathVariable int id,
                            @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
                            @RequestParam(name = "pageSize", defaultValue = "20") int pageSize,
@@ -135,15 +148,19 @@ public class ComicController {
         return "comic";
     }
 
+    @ApiOperation("为漫画添加指定章节")
     @GetMapping("/{id}/addChapter")
     @ResponseBody
+//    @PreAuthorize("hasAuthority('comic:chapter:create')")
     public String addChapter(@PathVariable int id, @RequestParam String title) {
         addChapter1(title, comicService.findById(id));
         return "Add chapter " + title + "succeed.";
     }
 
+    @ApiOperation("删除指定章节")
     @DeleteMapping("/{id}/deleteChapter")
     @ResponseBody
+//    @PreAuthorize("hasAuthority('comic:chapter:delete')")
     public String deleteChapter(@PathVariable int id, @RequestParam String title) {
         if (title != null) {
             chapterService.deleteByComicIdAndTitle(id, title);
@@ -151,6 +168,7 @@ public class ComicController {
         return "Delete chapter " + title + "succeed.";
     }
 
+    @ApiOperation("测试方法")
     @GetMapping("/test")
     @ResponseBody
     public String test() {

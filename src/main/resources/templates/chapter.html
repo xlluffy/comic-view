@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="/static/stylesheets/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/stylesheets/chapter.css">
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/chapter.css">
 
     <title th:text="${chapter.title}+'卷'"></title>
 </head>
@@ -31,7 +31,7 @@
             <h2 th:text="*{comic.title}+' 第'+*{title}+'卷'"></h2>
         </div>
         <!--<div class="page" th:each="now : ${#numbers.sequence(1, 20)}" th:id="${now}">-->
-        <!--<img th:src="|/static/*{title}/${#numbers.formatInteger(now, 3)}*{suffix}|" class="border border-secondary rounded mt-2 mb-2"-->
+        <!--<img th:src="|/*{title}/${#numbers.formatInteger(now, 3)}*{suffix}|" class="border border-secondary rounded mt-2 mb-2"-->
         <!--th:alt="|${#numbers.formatInteger(now, 3)}*{suffix}|">-->
         <!--<br />-->
         <!--<span class="text-secondary" th:text="|${now}/*{pages}|"></span>-->
@@ -77,7 +77,7 @@
                     下一卷
                 </button>
             </div>
-            <img src="/static/images/list-unordered.svg" alt="" id="menu_icon" style="height: 32px; width: 24px;">
+            <img src="/images/list-unordered.svg" alt="" id="menu_icon" style="height: 32px; width: 24px;">
         </div>
     </div>
 </div>
@@ -85,13 +85,13 @@
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
-<script src="/static/scripts/bootstrap.min.js"></script>
+<script src="/scripts/bootstrap.min.js"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
     let chapter = /*[[${chapter}]]*/null;
     /*]]>*/
 </script>
-<script src="/static/scripts/tools.js"></script>
-<script src="/static/scripts/chapter.js"></script>
+<script src="/scripts/tools.js"></script>
+<script src="/scripts/chapter.js"></script>
 </body>
 </html>

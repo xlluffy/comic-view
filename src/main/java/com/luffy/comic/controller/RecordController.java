@@ -1,13 +1,16 @@
-package com.luffy.comic.Controller;
+package com.luffy.comic.controller;
 
 import com.luffy.comic.model.Record;
 import com.luffy.comic.service.RecordService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+@Api(tags = "RecordController", description = "阅读记录管理")
 @Controller
 @RequestMapping("/record")
 public class RecordController {
@@ -16,6 +19,7 @@ public class RecordController {
     @Autowired
     private RecordService recordService;
 
+    @ApiOperation("插入或者更新记录")
     @PostMapping("/update")
     @ResponseBody
     public String insertOrUpdateRecord(@RequestBody Record record) {
@@ -31,6 +35,7 @@ public class RecordController {
         return "";
     }
 
+    @ApiOperation("获取最新记录")
     @GetMapping("/last")
     @ResponseBody
     public Record getLastRecord() {

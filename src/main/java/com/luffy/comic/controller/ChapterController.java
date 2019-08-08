@@ -1,7 +1,9 @@
-package com.luffy.comic.Controller;
+package com.luffy.comic.controller;
 
 import com.luffy.comic.mapper.ChapterMapper;
 import com.luffy.comic.service.ChapterService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+@Api(tags = "ChapterController", description = "漫画章节管理")
 @Controller
 @RequestMapping("/chapter")
 public class ChapterController {
@@ -27,6 +30,7 @@ public class ChapterController {
         return filename.substring(filename.indexOf('.'));
     }
 
+    @ApiOperation("更新章节")
     @RequestMapping("/update")
     @ResponseBody
     public String updateChapters() {
@@ -40,7 +44,9 @@ public class ChapterController {
         return "update succeed.";
     }
 
+    @ApiOperation("获取章节信息")
     @GetMapping("/{id}")
+//    @PreAuthorize("hasAuthority('comic:chapter:read')")
     public String getChapter(@PathVariable int id, @RequestParam(name = "page", defaultValue = "1") int page, Model model) {
         model.addAttribute("comic_id", id);
         model.addAttribute("chapter", chapterService.findById(id));
@@ -49,6 +55,7 @@ public class ChapterController {
         return "chapter";
     }
 
+    @ApiOperation("获取所有章节信息")
     @GetMapping("/all")
     @ResponseBody
     public List<String> allChapters() {

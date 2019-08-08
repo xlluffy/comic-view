@@ -1,9 +1,9 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" type="text/css" href="/static/stylesheets/bootstrap.min.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap.min.css" />
 
     <title>主页</title>
 </head>
@@ -13,9 +13,9 @@
         <div class="col-md-2 d-none d-md-block bg-dark sidebar">
             <div class="nav flex-column mt-5" th:object="${last_record}" th:if="${last_record}">
                 <a class="nav-link mt-5" th:href="'/chapter/'+*{chapter.id}+'?page='+*{page}">
-                    <img th:src="|/static/${last_comic.title}/*{chapter.title}/*{page}*{suffix}|"
+                    <img th:src="|/${last_comic.title}/*{chapter.title}/*{page}*{suffix}|"
                          th:alt="|*{chapter.title}/*{page}*{suffix}|"
-                         class="img-thumbnail card-img-top" id="img-recent">
+                         class="img-thumbnail card-img-top" id="img-recent" />
                 </a>
                 <div class="text-center text-light" th:if="${last_record}">
                     <p>最近阅读：</p>
@@ -48,10 +48,11 @@
                 <div class="col-2 mt-3 ml-4" th:each="comic : ${comics}" th:object="${all_records[comic.id]}">
                     <div class="card" th:if="${all_records[comic.id]}">
                         <a th:href="'/comic/'+${comic.id}">
-                            <img th:src="|/static/${comic.title}/*{chapter.title}/*{page}*{suffix}|"
+                            <img th:src="|/${comic.title}/*{chapter.title}/*{page}*{suffix}|"
                                  th:alt="|/${comic.title}/*{chapter.title}/*{page}*{suffix}|"
-                                 class="img-thumbnail card-img-top" th:id="${comic.title}"
+                                 class="img-thumbnail card-img-top comic-content" th:id="${comic.title}"
                                  style="height: 283px" />
+                            <!--height: 477px on 1080p-->
                         </a>
                         <div class="card-body">
                             <span class="card-text text-center" th:text="${comic.title}"></span>
@@ -64,8 +65,8 @@
 
                     <div class="card" th:if="not ${all_records[comic.id]}">
                         <a th:href="'/comic/'+${comic.id}">
-                            <img th:src="|/static/${comic.title}/content.jpg|"
-                                 th:alt="|/static/${comic.title}/content.jpg|"
+                            <img th:src="|/${comic.title}/content.jpg|"
+                                 th:alt="|/${comic.title}/content.jpg|"
                                  class="img-thumbnail card-img-top" th:id="${comic.title}"
                                  style="height: 283px"/>
                         </a>
@@ -82,6 +83,6 @@
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
-<script src="/static/scripts/bootstrap.min.js"></script>
+<script src="/scripts/bootstrap.min.js"></script>
 </body>
 </html>
