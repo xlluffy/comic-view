@@ -10,6 +10,8 @@ public interface ChapterService {
 
     Chapter findByTitle(String title);
 
+    List<Chapter> findByComicId(Integer comicId);
+
     PageInfo<Chapter> findByComicIdByPage(Integer comicId, Integer pageNum, Integer pageSize);
 
     List<String> findAllTitles();
@@ -22,9 +24,13 @@ public interface ChapterService {
 
     void insert(Chapter chapter);
 
+    void insertByLocalTitle(Integer id, String title);
+
     void insertOrUpdate(Chapter chapter);
 
     void insertOrUpdateBatch(List<Chapter> chapters);
+
+    void deleteById(Integer id);
 
     void deleteByComicIdAndTitle(Integer comicId, String title);
 }

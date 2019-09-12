@@ -47,6 +47,9 @@ public interface ChapterMapper {
 
     void insertOrUpdateBatch(List<Chapter> chapters);
 
+    @Delete("delete from chapter where id=#{id}")
+    void deleteById(Integer id);
+
     @Delete("delete from chapter where comic_id = #{comicId} and title = #{title}")
     void deleteByComicIdAndTitle(@Param("comicId") Integer comicId, @Param("title") String title);
 }

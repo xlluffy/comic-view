@@ -20,6 +20,8 @@ public interface ComicService {
 
     void insert(Comic comic);
 
+    void insertByLocalTitle(String title);
+
     void insertOrUpdate(Comic comic);
 
     void insertOrUpdateBatch(List<Comic> comics);
@@ -29,6 +31,8 @@ public interface ComicService {
     void deleteByTitle(String title);
 
     void update(Comic comic);
+
+    void updateLocalAll();
 
     void updateByTitle(Comic comic);
 }

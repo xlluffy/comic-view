@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service("recordService")
 @Transactional
@@ -23,6 +25,29 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public List<Record> findAll() {
         return recordMapper.findAll();
+    }
+
+    @Override
+    public Map<Integer, Record> findAllByComics(List<Comic> comics) {
+        Map<Integer, Record> allRecords = new HashMap<>();
+        if (comics != null && comics.size() > 0) {
+            List<Record> records = this.findLastOneByComics(comics);
+            for (int i = 0; i < comics.size(); ++i) {
+                allRecords.put(comics.get(i).getId(), records.get(i));
+            }
+        }
+        return allRecords;
+    }
+
+    @Override
+    public Map<Integer, String> findAllByChapters(List<Chapter> chapters) {
+        Map<Integer, String> allRecords = new HashMap<>();
+        if (chapters != null && chapters.size() > 0) {
+            for (Record record : recordMapper.findByChapters(chapters)) {
+                allRecords.put(record.getChapter().getId(), record.getPage());
+            }
+        }
+        return allRecords;
     }
 
     @Override

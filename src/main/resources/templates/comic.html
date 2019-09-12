@@ -28,7 +28,9 @@
         <div class="col-md-10">
             <header class="text-center">
                 <h2 class="mb-4" th:text="${comic.title}"></h2>
-                <span th:text="|最近阅读: - ${last_record.chapter.title}卷- ${last_record.page}页|"></span>
+                <span th:if="${last_record}"
+                      th:text="|最近阅读: - ${last_record.chapter.title}卷- ${last_record.page}页|">
+                </span>
             </header>
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-end">

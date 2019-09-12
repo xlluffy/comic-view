@@ -1,6 +1,7 @@
 package com.luffy.comic.controller;
 
 import com.luffy.comic.mapper.ChapterMapper;
+import com.luffy.comic.model.Chapter;
 import com.luffy.comic.service.ChapterService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,8 +49,9 @@ public class ChapterController {
     @GetMapping("/{id}")
 //    @PreAuthorize("hasAuthority('comic:chapter:read')")
     public String getChapter(@PathVariable int id, @RequestParam(name = "page", defaultValue = "1") int page, Model model) {
-        model.addAttribute("comic_id", id);
-        model.addAttribute("chapter", chapterService.findById(id));
+        Chapter chapter = chapterService.findById(id);
+        model.addAttribute("comic_id", chapter.getComic().getId());
+        model.addAttribute("chapter", chapter);
         model.addAttribute("prev_chapter", chapterService.findPrevIdById(id));
         model.addAttribute("next_chapter", chapterService.findNextIdById(id));
         return "chapter";

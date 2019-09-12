@@ -6,9 +6,14 @@ import com.luffy.comic.model.Comic;
 import com.luffy.comic.model.Record;
 
 import java.util.List;
+import java.util.Map;
 
 public interface RecordService {
     List<Record> findAll();
+
+    Map<Integer, Record> findAllByComics(List<Comic> comics);
+
+    Map<Integer, String> findAllByChapters(List<Chapter> chapters);
 
     Record findByChapterId(Integer chapterId);
 
