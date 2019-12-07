@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+    <title>Title</title>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="nav-top" th:fragment="nav-top">
+		<a class="navbar-brand" href="/comic/index">
+			<img alt="" height="30" src="/favicon.ico" width="30">
+		</a>
+		<!--<div class="collapse navbar-collapse">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item">
+					<a href="/comic/index" >主页</a>
+				</li>
+			</ul>
+		</div>-->
+
+		<div class="collapse navbar-collapse justify-content-end">
+			<ul class="navbar-nav account">
+				<li class="nav-item login" id="login">
+					<a class="nav-link" href="/admin/login">登陆</a>
+				</li>
+				<li class="nav-item dropdown" id="logout">
+					<a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="navbarDropdownMenuLink" role="button">
+						profile
+					</a>
+					<div aria-labelledby="navbarDropdownMenuLink" class="dropdown-menu">
+						<a class="dropdown-item" href="#">profile</a>
+						<a class="dropdown-item" href="#">Something</a>
+						<a class="dropdown-item" href="/admin/logout">登出</a>
+					</div>
+				</li>
+				<li class="nav-item dropdown" id="comic-admin">
+					<a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button">
+						管理员
+					</a>
+					<div aria-labelledby="navbarDropdownMenuLink" class="dropdown-menu">
+						<a class="dropdown-item" href="/admin/comic/index">漫画管理</a>
+						<a class="dropdown-item" href="#">下载</a>
+						<a class="dropdown-item" href="">登出</a>
+					</div>
+				</li>
+			</ul>
+		</div>
+    </nav>
+
+	<nav aria-label="Page navigation example" class="mt-3" id="nav-pag" th:fragment="nav-pag">
+		<ul class="pagination justify-content-center" th:with="path=${#request.getRequestURI()}">
+			<li class="page-item" th:classappend="${not pages.hasPreviousPage} ? 'disabled'">
+				<a class="page-link" tabindex="-1" th:href="${path}+'?pageNum='+${pages.prePage}+'&pageSize='+${pages.pageSize}">Previous</a>
+			</li>
+			<li class="page-item" th:classappend="${now == pages.pageNum} ? 'active'" th:each="now : ${pages.navigatepageNums}">
+				<a class="page-link" th:href="${path}+'?pageNum='+${now}+'&pageSize='+${pages.pageSize}" th:text="${now}">
+				</a>
+			</li>
+			<li class="page-item" th:classappend="${not pages.hasNextPage} ? 'disabled'">
+				<a class="page-link" th:href="${path}+'?pageNum='+${pages.nextPage}+'&pageSize='+${pages.pageSize}">Next</a>
+			</li>
+		</ul>
+	</nav>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
+<script src="/scripts/bootstrap.min.js"></script>
+</body>
+</html>

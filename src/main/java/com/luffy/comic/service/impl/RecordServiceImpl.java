@@ -7,7 +7,6 @@ import com.luffy.comic.model.Chapter;
 import com.luffy.comic.model.Comic;
 import com.luffy.comic.model.Record;
 import com.luffy.comic.service.RecordService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,8 +18,11 @@ import java.util.Map;
 @Service("recordService")
 @Transactional
 public class RecordServiceImpl implements RecordService {
-    @Autowired
     private RecordMapper recordMapper;
+
+    public RecordServiceImpl(RecordMapper recordMapper) {
+        this.recordMapper = recordMapper;
+    }
 
     @Override
     public List<Record> findAll() {

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet"/>
+    <!-- Custom styles for this template -->
+    <link href="/stylesheets/signin.css" rel="stylesheet"/>
+    <link href="https://v4ing.bootcss.com/docs/4.3/examples/sign-in/" rel="canonical" />
+    <title>登陆</title>
+</head>
+<body class="text-center">
+	<!--<div th:replace="~{nav_top :: nav}"></div>-->
+
+	<form action="/admin/login" class="form-signin" method="post">
+		<!-- <img class="mb-4" src="./Signin Template · Bootstrap_files/bootstrap-solid.svg" alt="" width="72" height="72"> -->
+		<h1 class="h3 mb-3 font-weight-normal">请登录</h1>
+		<label class="sr-only" for="inputEmail">邮箱或者用户名</label>
+		<input autofocus="" class="form-control" id="inputEmail" name="username"
+			   placeholder="邮箱或者用户名" required="" type="text" value="test">
+		<label class="sr-only" for="inputPassword">密码</label>
+		<input class="form-control" id="inputPassword" name="password" placeholder="密码"
+			   required="" type="password" value="123456">
+		<div class="checkbox mb-3">
+			<label>
+				<input type="checkbox" value="remember-me"> Remember me
+			</label>
+		</div>
+		<button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+		<p class="mt-5 mb-3 text-muted">© 2017-2019</p>
+	</form>
+	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+	<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
+	<script src="/scripts/bootstrap.min.js"></script>
+	<script src="/scripts/tools.js"></script>
+	<script src="/scripts/main.js"></script>
+</body>
+</html>

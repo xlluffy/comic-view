@@ -4,59 +4,41 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap.min.css" />
+    <link href="/stylesheets/main.css" rel="stylesheet" type="text/css" />
 
     <title>主页</title>
 </head>
 <body>
+<div th:replace="nav :: nav-top"></div>
+<div th:replace="breadcrumb :: comic"></div>
+
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-2 d-none d-md-block bg-dark sidebar">
-            <div class="nav flex-column mt-5" th:object="${last_record}" th:if="${last_record}">
-                <a class="nav-link mt-5" th:href="'/chapter/'+*{chapter.id}+'?page='+*{page}">
-                    <img th:src="|/${last_comic.title}/*{chapter.title}/*{page}*{suffix}|"
-                         th:alt="|*{chapter.title}/*{page}*{suffix}|"
-                         class="img-thumbnail card-img-top" id="img-recent" />
-                </a>
-                <div class="text-center text-light" th:if="${last_record}">
-                    <p>最近阅读：</p>
-                    <p th:text="${last_comic.title}"></p>
-                    <p th:text="|*{chapter.title}卷|"></p>
-                    <p th:text="|*{page}页|"></p>
-                </div>
-            </div>
-        </div>
+        <div th:replace="sidebar :: comic(${last_comic})"></div>
 
         <div class="col-md-10">
             <header class="text-center">
                 <h2 class="mb-4">目录</h2>
-                <span th:text="|最近阅读: ${last_comic.title} - ${last_record.chapter.title}卷 - ${last_record.page}页|"></span>
+                <span th:if="${last_record}"
+                        th:text="|最近阅读: ${last_comic.title} - ${last_record.chapter.title}卷 - ${last_record.page}页|">
+                </span>
             </header>
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-end">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1">Previous</a>
-                    </li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Next</a>
-                    </li>
-                </ul>
-            </nav>
+            <div th:replace="nav :: nav-pag"></div>
             <div class="row justify-content-center" id="cards">
                 <div class="col-2 mt-3 ml-4" th:each="comic : ${comics}" th:object="${all_records[comic.id]}">
                     <div class="card" th:if="${all_records[comic.id]}">
-                        <a th:href="'/comic/'+${comic.id}">
+<!--                        TODO: 将img设为背景，单独处理-->
+                        <a target="_blank" th:href="'/comic/'+${comic.id}">
                             <img th:src="|/${comic.title}/*{chapter.title}/*{page}*{suffix}|"
                                  th:alt="|/${comic.title}/*{chapter.title}/*{page}*{suffix}|"
                                  class="img-thumbnail card-img-top comic-content" th:id="${comic.title}"
-                                 style="height: 283px" />
+                                 style="height: 283px;" />
                             <!--height: 477px on 1080p-->
                         </a>
                         <div class="card-body">
-                            <span class="card-text text-center" th:text="${comic.title}"></span>
-                            <a th:href="'/chapter/'+*{chapter.id}+'?page='+*{page}"
+                            <span class="card-text text-center text-summary" data-placement="top"
+                                  data-toggle="tooltip" th:text="${comic.title}" th:title="${comic.title}"></span>
+                            <a target="_blank" th:href="'/chapter/'+*{chapter.id}+'?page='+*{page}"
                                class="btn btn-outline-danger float-right btn-sm " data-toggle="tooltip" data-placement="top"
                                th:title="'第'+*{page}+'页'">
                                 Recent</a>
@@ -64,14 +46,15 @@
                     </div>
 
                     <div class="card" th:if="not ${all_records[comic.id]}">
-                        <a th:href="'/comic/'+${comic.id}">
-                            <img th:src="|/${comic.title}/content.jpg|"
-                                 th:alt="|/${comic.title}/content.jpg|"
+                        <a target="_blank" th:href="'/comic/'+${comic.id}">
+                            <img th:alt="|/${comic.title}/cover.jpg|"
+                                 th:src="|/${comic.title}/cover.jpg|"
                                  class="img-thumbnail card-img-top" th:id="${comic.title}"
                                  style="height: 283px"/>
                         </a>
                         <div class="card-body">
-                            <p class="card-text text-center" th:text="${comic.title}"></p>
+                            <p class="card-text text-center text-summary" data-placement="top"
+                               data-toggle="tooltip" th:text="${comic.title}" th:title="${comic.title}"></p>
                         </div>
                     </div>
                 </div>
@@ -81,8 +64,11 @@
 </div>
 
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
+<!--<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>-->
+<!--<script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>-->
+<script src="/scripts/http_cdn.bootcss.com_jquery_3.2.1_jquery.js"></script>
+<script src="/scripts/http_unpkg.com_popper.js_dist_umd_popper.js"></script>
 <script src="/scripts/bootstrap.min.js"></script>
+<script src="/scripts/main.js"></script>
 </body>
 </html>

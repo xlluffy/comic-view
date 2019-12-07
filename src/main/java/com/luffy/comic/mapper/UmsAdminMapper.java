@@ -2,9 +2,11 @@ package com.luffy.comic.mapper;
 
 import com.luffy.comic.model.UmsAdmin;
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface UmsAdminMapper {
     @Select("select * from ums_admin where id = #{id}")
     UmsAdmin findById(Integer id);

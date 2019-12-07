@@ -2,9 +2,11 @@ package com.luffy.comic.mapper;
 
 import com.luffy.comic.model.Page;
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface PageMapper {
 
     @Select("select * from page where id = #{id}")

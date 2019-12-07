@@ -20,4 +20,11 @@ public class UmsAdminServiceImplTest {
         admin.setPassword("missyou123.");
         umsAdminService.update(admin);*/
     }
+
+    @Test
+    public void login() {
+        String username = "test";
+        String password = "123456";
+        umsAdminService.login(username, password);
+    }
 }

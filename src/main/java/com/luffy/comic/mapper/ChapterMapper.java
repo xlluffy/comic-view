@@ -2,9 +2,11 @@ package com.luffy.comic.mapper;
 
 import com.luffy.comic.model.Chapter;
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface ChapterMapper {
     @Select("select * from chapter where id=#{id}")
     @Results(id = "chapterMapper", value = {
@@ -27,11 +29,15 @@ public interface ChapterMapper {
     @Select("select title from chapter order by id")
     List<String> findAllTitles();
 
-    @Select("select id from chapter where id < #{id} order by id desc limit 1")
+    @Select("select id from chapter where id < #{id} and comic_id = " +
+            "(select comic_id from chapter where id=#{id})order by id desc limit 1")
     Integer findPrevIdById(Integer id);
-
-    @Select("select id from chapter where id > #{id} order by id limit 1")
+    @Select("select id from chapter where id > #{id} and comic_id = " +
+            "(select comic_id from chapter where id=#{id})order by id limit 1")
     Integer findNextIdById(Integer id);
+
+    @Select("select count(1) from chapter where comic_id = #{comicId}")
+    Integer countByComicId(Integer comicId);
 
     @Update("update chapter set pages=#{pages} where title=#{title}")
     void updatePagesByTitle(@Param("title") String title, @Param("pages") int pages);

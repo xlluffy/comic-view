@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+    <title>Title</title>
+</head>
+<body>
+<nav aria-label="breadcrumb" th:fragment="comic">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/comic/index">主页</a>
+        </li>
+        <li class="breadcrumb-item" th:if="${comic}">
+            <a th:href="|/comic/${comic.id}|" th:text="${comic.title}"></a>
+        </li>
+        <li class="breadcrumb-item" th:if="${chapter}">
+            <a th:href="|/comic/${chapter.comic.id}|" th:text="${chapter.comic.title}"></a>
+        </li>
+        <li class="breadcrumb-item" th:if="${chapter}">
+            <a th:href="|/chapter/${chapter.id}|" th:text="${chapter.title}"></a>
+        </li>
+    </ol>
+</nav>
+
+<nav aria-label="breadcrumb" th:fragment="admin-comic">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/comic/index">主页</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a th:href="@{/admin/comic/index}">漫画管理</a>
+        </li>
+        <li class="breadcrumb-item" th:if="${comicsMap}">
+            <a th:href="@{/admin/comic/addList}">本地可添加漫画</a>
+        </li>
+        <li class="breadcrumb-item" th:if="${chapters}">
+            <a th:href="|/admin/comic/${comic.id}/addList|" th:text="${comic.title}"></a>
+        </li>
+    </ol>
+</nav>
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
+<script src="/scripts/bootstrap.min.js"></script>
+</body>
+</html>

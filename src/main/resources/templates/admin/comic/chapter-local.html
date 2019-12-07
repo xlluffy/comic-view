@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/stylesheets/admin-comic.css" rel="stylesheet" type="text/css">
+
+    <title th:text="${comic.title} + '本地章节'"></title>
+</head>
+<body>
+<div th:replace="nav :: nav-top"></div>
+<div th:replace="breadcrumb :: admin-comic"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="sidebar :: admin-comic"></div>
+        <div class="col">
+            <table class="table table-striped justify-content-center">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">章节名</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="title, index : ${chapters}">
+                    <th scope="row" th:text="${index.count}"></th>
+                    <td><a th:href="|/admin/comic/${comic.id}|" th:text="${title}"></a></td>
+                    <td><a class="add-chapter" th:href="|/admin/comic/${comic.id}/add?title=${title}|">添加</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
+<script src="/scripts/bootstrap.min.js"></script>
+<script src="/scripts/main.js"></script>
+</body>
+</html>

@@ -8,7 +8,6 @@ import com.luffy.comic.model.UmsPermission;
 import com.luffy.comic.service.UmsAdminService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,18 +27,23 @@ import java.util.List;
 public class UmsAdminServiceImpl implements UmsAdminService {
     private static final Logger logger = LoggerFactory.getLogger(UmsAdminServiceImpl.class);
 
-    @Autowired
+    private UmsAdminMapper umsAdminMapper;
     private UserDetailsService userDetailService;
-    @Autowired
     private UmsAdminRoleRelationMapper adminRoleRelationMapper;
-    @Autowired
     private JwtTokenUtil jwtTokenUtil;
-    @Autowired
     private PasswordEncoder passwordEncoder;
     @Value("${jwt.tokenHead}")
     private String tokenHead;
-    @Autowired
-    private UmsAdminMapper umsAdminMapper;
+
+    public UmsAdminServiceImpl(UmsAdminMapper umsAdminMapper, UserDetailsService userDetailService,
+                               UmsAdminRoleRelationMapper adminRoleRelationMapper,
+                               JwtTokenUtil jwtTokenUtil, PasswordEncoder passwordEncoder) {
+        this.umsAdminMapper = umsAdminMapper;
+        this.userDetailService = userDetailService;
+        this.adminRoleRelationMapper = adminRoleRelationMapper;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public UmsAdmin getAdminByUsername(String username) {
@@ -69,11 +73,17 @@ public class UmsAdminServiceImpl implements UmsAdminService {
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
             token = jwtTokenUtil.generateToken(userDetails);
         } catch (AuthenticationException e) {
             logger.warn("登陆异常: {}", e.getMessage());
         }
         return token;
+    }
+
+    @Override
+    public void logout() {
+        SecurityContextHolder.clearContext();
     }
 
     @Override

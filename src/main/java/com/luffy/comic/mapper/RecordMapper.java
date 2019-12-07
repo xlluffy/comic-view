@@ -3,9 +3,11 @@ package com.luffy.comic.mapper;
 import com.luffy.comic.model.Chapter;
 import com.luffy.comic.model.Record;
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface RecordMapper {
 
     @Select("select * from record where chapter_id = #{chapterId}")
@@ -15,13 +17,13 @@ public interface RecordMapper {
     })
     Record findByChapterId(Integer chapterId);
 
-    @Select("select * from record where last_update = (select max(last_update) from record)")
+    @Select("select * from record where last_update = (select max(last_update) from record) limit 1")
     @ResultMap("recordMapper")
     Record findLastOne();
 
     @Select("select * from record as a where a.last_update = " +
             "(select max(r.last_update) from record as r, chapter as c " +
-            "where c.comic_id = #{comicId} and r.chapter_id = c.id) group by a.last_update")
+            "where c.comic_id = #{comicId} and r.chapter_id = c.id) group by a.last_update limit 1")
     @ResultMap("recordMapper")
     Record findLastOneByComicId(Integer comicId);
 

@@ -3,33 +3,35 @@ package com.luffy.comic.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.luffy.comic.mapper.ChapterMapper;
+import com.luffy.comic.mapper.ComicMapper;
 import com.luffy.comic.model.Chapter;
 import com.luffy.comic.model.Comic;
 import com.luffy.comic.service.ChapterService;
-import com.luffy.comic.service.ComicService;
 import com.luffy.comic.tools.Tools;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.luffy.comic.tools.Tools.transToPath;
 
 @Service("chapterService")
 @Transactional
 public class ChapterServiceImpl implements ChapterService {
-    private static final Log logger = LogFactory.getLog(ComicServiceImpl.class);
+//    private static final Log logger = LogFactory.getLog(ComicMapperImpl.class);
     private static final String root = "D:\\Comic";
 
-    @Autowired
     private ChapterMapper chapterMapper;
+    private ComicMapper comicMapper;
 
-    @Autowired
-    private ComicService comicService;
+    public ChapterServiceImpl(ChapterMapper chapterMapper, ComicMapper comicMapper) {
+        this.chapterMapper = chapterMapper;
+        this.comicMapper = comicMapper;
+    }
 
     @Override
     public Chapter findById(Integer id) {
@@ -54,6 +56,21 @@ public class ChapterServiceImpl implements ChapterService {
     }
 
     @Override
+    public Set<String> findAddableLocalChapter(Integer comicId) {
+        String comicTitle = comicMapper.findById(comicId).getTitle();
+        String[] titles = new File(transToPath(root, comicTitle)).list();
+        if (titles != null) {
+            Set<String> remoteTitles = this.findByComicId(comicId).stream().
+                    map(Chapter::getTitle).collect(Collectors.toSet());
+            Set<String> localTitles = Arrays.stream(titles).
+                    filter(o -> new File(transToPath(root, comicTitle, o)).isDirectory()).collect(Collectors.toSet());
+            localTitles.removeAll(remoteTitles);
+            return localTitles;
+        }
+        return null;
+    }
+
+    @Override
     public List<String> findAllTitles() {
         return chapterMapper.findAllTitles();
     }
@@ -69,6 +86,11 @@ public class ChapterServiceImpl implements ChapterService {
     }
 
     @Override
+    public Integer countByComicId(Integer comicId) {
+        return chapterMapper.countByComicId(comicId);
+    }
+
+    @Override
     public void updatePagesByTitle(String title, int pages) {
         chapterMapper.updatePagesByTitle(title, pages);
     }
@@ -80,7 +102,7 @@ public class ChapterServiceImpl implements ChapterService {
 
     @Override
     public void insertByLocalTitle(Integer id, String title) {
-        Comic comic = comicService.findById(id);
+        Comic comic = comicMapper.findById(id);
         String[] pages = new File(transToPath(root, comic.getTitle(), title)).list();
         if (pages != null && pages.length > 0) {
             Chapter chapter = new Chapter(comic, title, pages.length, Tools.splitSuffix(pages[0]));

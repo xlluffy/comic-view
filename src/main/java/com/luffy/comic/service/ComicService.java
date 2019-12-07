@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.luffy.comic.model.Comic;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ComicService {
     Comic findById(Integer id);
@@ -12,7 +13,11 @@ public interface ComicService {
 
     List<Comic> findAll();
 
+    Comic findNextComic(Integer id);
+
     PageInfo<Comic> findByPage(Integer pageNum, Integer pageSize);
+
+    Map<String, Integer> findAddableLocalComics();
 
     Comic findByChapterId(Integer chapterId);
 

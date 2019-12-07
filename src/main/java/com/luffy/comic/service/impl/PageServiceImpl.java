@@ -5,7 +5,6 @@ import com.github.pagehelper.PageInfo;
 import com.luffy.comic.mapper.PageMapper;
 import com.luffy.comic.model.Page;
 import com.luffy.comic.service.PageService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,9 +13,11 @@ import java.util.List;
 @Service("pageService")
 @Transactional
 public class PageServiceImpl implements PageService {
-    @Autowired
     private PageMapper pageMapper;
 
+    public PageServiceImpl(PageMapper pageMapper) {
+        this.pageMapper = pageMapper;
+    }
 
     @Override
     public Page findById(Integer id) {

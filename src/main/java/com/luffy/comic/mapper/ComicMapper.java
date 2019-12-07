@@ -2,9 +2,11 @@ package com.luffy.comic.mapper;
 
 import com.luffy.comic.model.Comic;
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface ComicMapper {
 
     @Select("select * from comic where id = #{id}")
@@ -20,6 +22,10 @@ public interface ComicMapper {
     @Select("select comic.* from comic, chapter where chapter.id = #{chapterId} and chapter.comic_id = comic.id")
     @ResultMap("comicMapper")
     Comic findByChapterId(Integer chapterId);
+
+    @Select("select * from comic where id > #{comicId} order by id limit 1")
+    @ResultMap("comicMapper")
+    Comic findNextComic(Integer comicId);
 
     @Select("select * from comic")
     @ResultMap("comicMapper")

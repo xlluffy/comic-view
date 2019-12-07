@@ -16,7 +16,7 @@ function createCard(container, chapter) {
 function createCards() {
     let container = $("#cards");
     for (let x in chapters) {
-        createCard(container, chapter);
+        createCard(container, chapter_drop_down);
     }
 }
 

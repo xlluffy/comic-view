@@ -36,4 +36,22 @@ public class ComicServiceImplTest {
         System.out.println("comicService.findByTitle(\"Hayate\") = " + comicService.findByTitle("Hayate"));
         comicService.findAll().forEach(System.out::println);
     }
+
+    @Test
+    public void findByPage() {
+        System.out.println("First page: ");
+        comicService.findByPage(1, 20).getList().forEach(System.out::println);
+        System.out.println("Second page: ");
+        comicService.findByPage(2, 20).getList().forEach(System.out::println);
+        System.out.println("Third page: ");
+        comicService.findByPage(3, 20).getList().forEach(System.out::println);
+        System.out.println(comicService.count());
+    }
+
+    @Test
+    public void createBatchComic() {
+        for (int i = 1; i < 60; i++) {
+            comicService.insert(new Comic(0, String.format("test%02d", i), "", "No one"));
+        }
+    }
 }

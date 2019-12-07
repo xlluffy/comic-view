@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.luffy.comic.model.Chapter;
 
 import java.util.List;
+import java.util.Set;
 
 public interface ChapterService {
     Chapter findById(Integer id);
@@ -14,11 +15,15 @@ public interface ChapterService {
 
     PageInfo<Chapter> findByComicIdByPage(Integer comicId, Integer pageNum, Integer pageSize);
 
+    Set<String> findAddableLocalChapter(Integer comicId);
+
     List<String> findAllTitles();
 
     Integer findPrevIdById(Integer id);
 
     Integer findNextIdById(Integer id);
+
+    Integer countByComicId(Integer comicId);
 
     void updatePagesByTitle(String title, int pages);
 

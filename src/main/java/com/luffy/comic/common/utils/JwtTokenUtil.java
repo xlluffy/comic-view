@@ -64,7 +64,18 @@ public class JwtTokenUtil {
         try {
             return getClaimsFromToken(token).getSubject();
         } catch (Exception e) {
-            return null;
+            return "";
+        }
+    }
+
+    /**
+     * 从claims中获取登录用户名
+     */
+    private String getUserNameFromClaims(Claims claims) {
+        try {
+            return claims.getSubject();
+        } catch (Exception e) {
+            return "";
         }
     }
 
@@ -74,8 +85,9 @@ public class JwtTokenUtil {
      * @param userDetails   从数据库查询出来的用户信息
      */
     public boolean validateToken(String token, UserDetails userDetails) {
-        String username = getUserNameFromToken(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        Claims claims = getClaimsFromToken(token);
+        String username = getUserNameFromClaims(claims);
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(claims);
     }
 
     /**
@@ -83,6 +95,13 @@ public class JwtTokenUtil {
      */
     private boolean isTokenExpired(String token) {
         return getExpiredDateFromToken(token).before(new Date());
+    }
+
+    /**
+     * 判断token对应的claims是否已经失效
+     */
+    private boolean isTokenExpired(Claims claims) {
+        return claims.getExpiration().before(new Date());
     }
 
     /**

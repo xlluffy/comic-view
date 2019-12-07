@@ -27,6 +27,11 @@ public interface UmsAdminService {
      */
     String login(String username, String password);
 
+    /**
+     * 登陆
+     */
+    void logout();
+
     void update(UmsAdmin umsAdmin);
 
     /**

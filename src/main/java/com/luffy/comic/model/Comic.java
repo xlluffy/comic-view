@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 
 public class Comic implements Serializable {
-
+    private static final long serialVersionUID = 2120869894113412147L;
     private int id;
     private String title;
     private String fullTitle;

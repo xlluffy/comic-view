@@ -4,26 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap.css">
+    <link href="/stylesheets/main.css" rel="stylesheet" type="text/css" />
 
     <title th:text="${comic.title}"></title>
 </head>
 <body>
+<div th:replace="nav :: nav-top"></div>
+<div th:replace="breadcrumb :: comic"></div>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-2 d-none d-md-block bg-dark sidebar">
-            <div class="nav flex-column mt-5" th:object="${last_record}" th:if="${last_record}">
-                <a class="nav-link mt-5" th:href="'/chapter/'+*{chapter.id}+'?page='+*{page}">
-                    <img th:src="|/${comic.title}/*{chapter.title}/*{page}*{suffix}|"
-                         th:alt="|*{chapter.title}/*{page}*{suffix}|"
-                         class="img-thumbnail card-img-top" id="img-recent">
-                </a>
-                <div class="text-center text-light" th:if="${last_record}">
-                    <p>最近阅读：</p>
-                    <p th:text="|*{chapter.title}卷|"></p>
-                    <p th:text="|*{page}页|"></p>
-                </div>
-            </div>
-        </div>
+        <div th:replace="sidebar :: comic(${comic})"></div>
 
         <div class="col-md-10">
             <header class="text-center">
@@ -32,30 +22,18 @@
                       th:text="|最近阅读: - ${last_record.chapter.title}卷- ${last_record.page}页|">
                 </span>
             </header>
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-end">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1">Previous</a>
-                    </li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Next</a>
-                    </li>
-                </ul>
-            </nav>
+            <div th:replace="nav :: nav-pag"></div>
             <div class="row justify-content-center" id="cards">
                 <div class="col-2 mt-3 ml-4" th:each="chapter : ${chapters}" th:object="${chapter}">
                     <div class="card">
                         <a th:href="'/chapter/'+*{id}+'?page='+${all_records[chapter.id]}"
-                           th:if="${#maps.containsKey(all_records, chapter.id)}">
+                           target="_blank" th:if="${#maps.containsKey(all_records, chapter.id)}">
                             <img th:src="|/${comic.title}/*{title}/${all_records[chapter.id]}*{suffix}|"
                                  th:alt="|/${comic.title}/*{title}/${all_records[chapter.id]}*{suffix}|"
                                  class="img-thumbnail card-img-top" th:id="*{title}"
                                  style="height: 283px"/>
                         </a>
-                        <a th:href="'/chapter/'+*{id}"
+                        <a target="_blank" th:href="'/chapter/'+*{id}"
                            th:if="not ${#maps.containsKey(all_records, chapter.id)}">
                             <img th:src="|/${comic.title}/*{title}/001*{suffix}|"
                                  th:alt="|/${comic.title}/*{title}/001*{suffix}|"
@@ -65,7 +43,8 @@
 
                         </a>
                         <div class="card-body">
-                            <p class="card-text text-center" th:text="*{title}+'卷'"></p>
+                            <p class="card-text text-center text-summary" data-placement="top"
+                               data-toggle="tooltip" th:text="*{title}+'卷'" th:title="*{title}+'卷'"></p>
                         </div>
                     </div>
                 </div>
@@ -76,16 +55,11 @@
 
 
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
+<!--<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>-->
+<!--<script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>-->
+<script src="/scripts/http_cdn.bootcss.com_jquery_3.2.1_jquery.js"></script>
+<script src="/scripts/http_unpkg.com_popper.js_dist_umd_popper.js"></script>
 <script src="/scripts/bootstrap.min.js"></script>
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    let chapters = /* [[${chapters} ]]*/null;
-    let all_records = /*[[ ${all_records} ]]*/null;
-    /*]]>*/
-</script>
-<script src="/scripts/tools.js"></script>
-<script src="/scripts/comic.js"></script>
+<script src="/scripts/main.js"></script>
 </body>
 </html>

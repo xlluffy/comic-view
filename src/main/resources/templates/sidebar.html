@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+    <title>Title</title>
+</head>
+<body>
+<div class="col-md-2 d-none d-md-block bg-dark sidebar" th:fragment="comic(comic_)">
+    <div class="nav flex-column mt-5" th:if="${last_record}" th:object="${last_record}">
+        <a class="nav-link mt-5" target="_blank" th:href="'/chapter/'+*{chapter.id}+'?page='+*{page}">
+            <img class="img-thumbnail"
+                 id="img-recent"
+                 th:alt="|*{chapter.title}/*{page}*{suffix}|" th:src="|/${comic_.title}/*{chapter.title}/*{page}*{suffix}|" />
+        </a>
+        <div class="text-center text-light" id="record-info">
+            <p>最近阅读：</p>
+            <p th:if="${comics}" th:text="${last_comic.title}"></p>
+            <p th:text="|*{chapter.title}卷|"></p>
+            <p th:text="|*{page}页|"></p>
+        </div>
+    </div>
+    <div class="nav flex-column mt-5" th:if="${comic} and not ${last_record}">
+        <img class="img-thumbnail mt-5"
+             id="img-recent"
+             th:alt="|${comic.title}/cover.jpg|" th:src="|/${comic.title}/cover.jpg|">
+        <div class="text-center text-light" id="record-info">
+            <p>尚未阅读</p>
+        </div>
+    </div>
+</div>
+
+<div class="col-2 mt-lg-5" th:fragment="admin-comic">
+    <ul class="nav flex-column text-center nav-pills bg-gray">
+        <li class="nav-item list-group-item-action pt-2 pb-2">
+            <a class="nav-link" href="/admin/comic/index" th:classappend="${comics}? 'active'">漫画管理</a>
+            <hr>
+        </li>
+        <li class="nav-item list-group-item-action pt-2 pb-2">
+            <a class="nav-link" href="/admin/comic/addList" th:classappend="${comicsMap}? 'active'">添加漫画</a>
+            <hr>
+        </li>
+    </ul>
+</div>
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
+<script src="/scripts/bootstrap.min.js"></script>
+</body>
+</html>
