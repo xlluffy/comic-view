@@ -45,7 +45,6 @@ public class ComicController {
         PageInfo<Comic> pages = comicService.findByPage(pageNum, pageSize);
         Record lastRecord = recordService.findLastOne();
         model.addAttribute("pages", pages);
-        model.addAttribute("comics", pages.getList());
         model.addAttribute("last_record", lastRecord);
         model.addAttribute("last_comic", comicService.findByChapterId(lastRecord.getChapter().getId()));
         model.addAttribute("all_records", recordService.findAllByComics(pages.getList()));
@@ -80,7 +79,6 @@ public class ComicController {
 
         PageInfo<Chapter> pages = chapterService.findByComicIdByPage(id, pageNum, pageSize);
         model.addAttribute("pages", pages);
-        model.addAttribute("chapters", pages.getList());
         model.addAttribute("all_records", recordService.findAllByChapters(pages.getList()));
         model.addAttribute("last_record", recordService.findLastOneByComicId(comic.getId()));
         return "comic";

@@ -32,10 +32,10 @@
         </thead>
         <tbody>
         <!--                TODO: 改成由ajax实现的异步更新-->
-        <tr class="comic-info" th:each="comic, index : ${comics}">
+        <tr class="comic-info" th:each="comic, index : ${pages.list}">
             <th scope="row" th:text="${index.count} + ${pages.pageSize} * (${pages.pageNum} - 1)"></th>
             <td><a th:href="|/admin/comic/${comic.id}|" th:text="${comic.title}"></a></td>
-            <td th:text="${pageMap[comic.id]}"></td>
+            <td th:text="${comicsMap[comic.id]}"></td>
             <td th:text="${comic.author}"></td>
             <td><a th:href="|/admin/comic/${comic.id}/addList|">本地章节</a></td>
             <td><a th:href="|/admin/comic/add/${comic.title}|">更新</a></td>

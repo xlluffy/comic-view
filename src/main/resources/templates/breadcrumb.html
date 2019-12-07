@@ -33,11 +33,14 @@
         <li class="breadcrumb-item">
             <a th:href="@{/admin/comic/index}">漫画管理</a>
         </li>
-        <li class="breadcrumb-item" th:if="${comicsMap}">
+        <li class="breadcrumb-item" th:if="${localComicsMap}">
             <a th:href="@{/admin/comic/addList}">本地可添加漫画</a>
         </li>
-        <li class="breadcrumb-item" th:if="${chapters}">
-            <a th:href="|/admin/comic/${comic.id}/addList|" th:text="${comic.title}"></a>
+        <li class="breadcrumb-item" th:if="${comic}">
+            <a th:href="|/admin/comic/${comic.id}|" th:text="${comic.title}"></a>
+        </li>
+        <li class="breadcrumb-item" th:if="${localChapters}">
+            <a th:href="|/admin/comic/${comic.id}/addList|">本地可添加章节</a>
         </li>
     </ol>
 </nav>

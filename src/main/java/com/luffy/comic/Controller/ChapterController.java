@@ -1,6 +1,5 @@
 package com.luffy.comic.controller;
 
-import com.luffy.comic.model.Chapter;
 import com.luffy.comic.service.ChapterService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -50,9 +49,7 @@ public class ChapterController {
                              @RequestParam(name = "page", defaultValue = "1") int page,
 //                             @RequestParam(name = "style", defaultValue = "dropDown") String style,
                              Model model) {
-        Chapter chapter = chapterService.findById(id);
-        model.addAttribute("comic_id", chapter.getComic().getId());
-        model.addAttribute("chapter", chapter);
+        model.addAttribute("chapter", chapterService.findById(id));
         model.addAttribute("prev_chapter", chapterService.findPrevIdById(id));
         model.addAttribute("next_chapter", chapterService.findNextIdById(id));
         /*if (!"dropDown".equals(style)) {

@@ -28,8 +28,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="chapter, index : ${chapters}">
-                    <th scope="row" th:text="${index.count}"></th>
+                <tr th:each="chapter, index : ${pages.list}">
+                    <th scope="row" th:text="${index.count} + ${pages.pageSize} * (${pages.pageNum} - 1)"></th>
                     <td><a th:href="|/admin/comic/${comic.id}|" th:text="${chapter.title}"></a></td>
                     <td th:text="${chapter.pages}"></td>
                     <td th:text="${comic.author}"></td>

@@ -25,7 +25,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="comic, index : ${comicsMap}">
+                <tr th:each="comic, index : ${localComicsMap}">
                     <th scope="row" th:text="${index.count}"></th>
                     <td th:text="${comic.key}"></td>
                     <td th:text="${comic.value}"></td>

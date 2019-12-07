@@ -24,7 +24,7 @@
             </header>
             <div th:replace="nav :: nav-pag"></div>
             <div class="row justify-content-center" id="cards">
-                <div class="col-2 mt-3 ml-4" th:each="chapter : ${chapters}" th:object="${chapter}">
+                <div class="col-2 mt-3 ml-4" th:each="chapter : ${pages.list}" th:object="${chapter}">
                     <div class="card">
                         <a th:href="'/chapter/'+*{id}+'?page='+${all_records[chapter.id]}"
                            target="_blank" th:if="${#maps.containsKey(all_records, chapter.id)}">

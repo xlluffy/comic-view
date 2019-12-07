@@ -25,7 +25,7 @@
             </header>
             <div th:replace="nav :: nav-pag"></div>
             <div class="row justify-content-center" id="cards">
-                <div class="col-2 mt-3 ml-4" th:each="comic : ${comics}" th:object="${all_records[comic.id]}">
+                <div class="col-2 mt-3 ml-4" th:each="comic : ${pages.list}" th:object="${all_records[comic.id]}">
                     <div class="card" th:if="${all_records[comic.id]}">
 <!--                        TODO: 将img设为背景，单独处理-->
                         <a target="_blank" th:href="'/comic/'+${comic.id}">
