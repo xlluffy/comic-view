@@ -3,7 +3,7 @@ package com.luffy.comic.model;
 import java.io.Serializable;
 import java.util.Date;
 
-public class UmsAdminLoginLog implements Serializable {
+public class UserLoginLog implements Serializable {
     private static final long serialVersionUID = 2120869894112984149L;
 
     private long id;
@@ -13,10 +13,10 @@ public class UmsAdminLoginLog implements Serializable {
     private String userAgent;
     private Date createTime;
 
-    public UmsAdminLoginLog() {
+    public UserLoginLog() {
     }
 
-    public UmsAdminLoginLog(long id, int adminId, String ip, String address, String userAgent, Date createTime) {
+    public UserLoginLog(long id, int adminId, String ip, String address, String userAgent, Date createTime) {
         this.id = id;
         this.adminId = adminId;
         this.ip = ip;
@@ -75,7 +75,7 @@ public class UmsAdminLoginLog implements Serializable {
 
     @Override
     public String toString() {
-        return "UmsAdminLoginLog{" +
+        return "UserLoginLog{" +
                 "id=" + id +
                 ", adminId=" + adminId +
                 ", ip='" + ip + '\'' +

@@ -12,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -38,15 +39,16 @@ public class ComicController {
 
     @ApiOperation("获取漫画列表信息")
     @GetMapping("/index")
-//    @PreAuthorize("hasAuthority('comic:comic:read')")
+    @PreAuthorize("hasAuthority('comic:comic:read')")
     public String index(@RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
                         @RequestParam(name = "pageSize", defaultValue = "20") int pageSize,
                         Model model) {
-        PageInfo<Comic> pages = comicService.findByPage(pageNum, pageSize);
+//        PageInfo<Comic> pages = comicService.findByPage(pageNum, 0);
+        PageInfo<Comic> pages = new PageInfo<>();
         Record lastRecord = recordService.findLastOne();
         model.addAttribute("pages", pages);
-        model.addAttribute("last_record", lastRecord);
-        model.addAttribute("last_comic", comicService.findByChapterId(lastRecord.getChapter().getId()));
+        model.addAttribute("last_record", null/*lastRecord*/);
+        model.addAttribute("last_comic", null/*comicService.findByChapterId(lastRecord.getChapter().getId())*/);
         model.addAttribute("all_records", recordService.findAllByComics(pages.getList()));
         return "index";
     }
@@ -67,7 +69,7 @@ public class ComicController {
 
     @ApiOperation("根据漫画id获取漫画章节")
     @GetMapping("/{id}")
-//    @PreAuthorize("hasAuthority('comic:comic:read')")
+    @PreAuthorize("hasAuthority('comic:comic:read')")
     public String getComic(@PathVariable int id,
                            @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
                            @RequestParam(name = "pageSize", defaultValue = "20") int pageSize,
@@ -86,6 +88,7 @@ public class ComicController {
 
     @ApiOperation("根据漫画id获取下一个漫画")
     @GetMapping("/nextComic")
+    @PreAuthorize("hasAuthority('comic:comic:read')")
     @ResponseBody
     public CommonResult getNextComic(@RequestParam int id) {
 //        Comic nextComic

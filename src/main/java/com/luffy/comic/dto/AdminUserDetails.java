@@ -1,7 +1,7 @@
 package com.luffy.comic.dto;
 
-import com.luffy.comic.model.UmsAdmin;
-import com.luffy.comic.model.UmsPermission;
+import com.luffy.comic.model.Permission;
+import com.luffy.comic.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,12 +13,11 @@ import java.util.stream.Collectors;
 /**
  * SpringSecurity需要的用户详情
  */
-public class AdminUserDetails implements UserDetails {
-    private UmsAdmin umsAdmin;
-    private List<UmsPermission> permissionList;
+public class AdminUserDetails extends User implements UserDetails {
+    private List<Permission> permissionList;
 
-    public AdminUserDetails(UmsAdmin umsAdmin, List<UmsPermission> permissionList) {
-        this.umsAdmin = umsAdmin;
+    public AdminUserDetails(User user, List<Permission> permissionList) {
+        super(user);
         this.permissionList = permissionList;
     }
 
@@ -32,12 +31,12 @@ public class AdminUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return umsAdmin.getPassword();
+        return super.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return umsAdmin.getUsername();
+        return super.getUsername();
     }
 
     @Override
@@ -57,6 +56,6 @@ public class AdminUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return umsAdmin.getStatus() == 1;
+        return this.getStatus() == 1;
     }
 }

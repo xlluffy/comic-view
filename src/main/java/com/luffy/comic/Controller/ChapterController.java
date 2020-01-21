@@ -3,6 +3,7 @@ package com.luffy.comic.controller;
 import com.luffy.comic.service.ChapterService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,10 +25,6 @@ public class ChapterController {
         this.chapterService = chapterService;
     }
 
-    private String splitSuffix(String filename) {
-        return filename.substring(filename.indexOf('.'));
-    }
-
     @ApiOperation("更新章节")
     @RequestMapping("/update")
     @ResponseBody
@@ -44,7 +41,7 @@ public class ChapterController {
 
     @ApiOperation("获取章节信息")
     @GetMapping("/{id}")
-//    @PreAuthorize("hasAuthority('comic:chapter:read')")
+    @PreAuthorize("hasAuthority('comic:comic:read')")
     public String getChapter(@PathVariable int id,
                              @RequestParam(name = "page", defaultValue = "1") int page,
 //                             @RequestParam(name = "style", defaultValue = "dropDown") String style,

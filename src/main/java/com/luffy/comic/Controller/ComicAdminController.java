@@ -15,7 +15,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 
 @Api(tags = "ComicAdminController", description = "漫画管理")
 @Controller
@@ -37,15 +36,12 @@ public class ComicAdminController {
                         @RequestParam(name = "pageSize", defaultValue = "20") int pageSize,
                         Model model) {
         PageInfo<Comic> pages = comicService.findByPage(pageNum, pageSize);
-        List<Comic> comics = pages.getList();
-        HashMap<Integer, Integer> pageMap = new HashMap<>();
-        for (Comic comic : comics) {
-            pageMap.put(comic.getId(), chapterService.countByComicId(comic.getId()));
+        HashMap<Integer, Integer> comicsMap = new HashMap<>();
+        for (Comic comic : pages.getList()) {
+            comicsMap.put(comic.getId(), chapterService.countByComicId(comic.getId()));
         }
         model.addAttribute("pages", pages);
-        model.addAttribute("comics", comics);
-        model.addAttribute("pageMap", pageMap);
-//        model.addAttribute("count", comicService.count());
+        model.addAttribute("comicsMap", comicsMap);
         return "admin/comic/index";
     }
 
@@ -58,8 +54,6 @@ public class ComicAdminController {
         model.addAttribute("comic", comicService.findById(comicId));
         PageInfo<Chapter> pages = chapterService.findByComicIdByPage(comicId, pageNum, pageSize);
         model.addAttribute("pages", pages);
-        model.addAttribute("chapters", pages.getList());
-        model.addAttribute("count", chapterService.countByComicId(comicId));
         return "admin/comic/comic";
     }
 
@@ -77,7 +71,7 @@ public class ComicAdminController {
 //    @PreAuthorize("hasAuthority('comic:comic:read')")
     public String getAddableComicList(Model model) {
 //        return CommonResult.success(comicService.findAddableLocalComics(), "Get comics list succeed.");
-        model.addAttribute("comicsMap", comicService.findAddableLocalComics());
+        model.addAttribute("localComicsMap", comicService.findAddableLocalComics());
         return "/admin/comic/comic-local";
     }
 
@@ -127,9 +121,9 @@ public class ComicAdminController {
     @GetMapping("/{comicId}/addList")
 //    @PreAuthorize("hasAuthority('comic:chapter:read')")
     public String getAddableChapterList(@PathVariable int comicId, Model model) {
-        Comic comic = comicService.findById(comicId);
+//        Comic comic = comicService.findById(comicId);
         model.addAttribute("comic", comicService.findById(comicId));
-        model.addAttribute("chapters", chapterService.findAddableLocalChapter(comicId));
+        model.addAttribute("localChapters", chapterService.findAddableLocalChapter(comicId));
         return "admin/comic/chapter-local";
         /*return CommonResult.success(chapterService.findAddableLocalChapter(comicId),
                 "Get chapter of " + comicId + " succeed.");*/

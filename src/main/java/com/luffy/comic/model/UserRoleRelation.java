@@ -2,14 +2,14 @@ package com.luffy.comic.model;
 
 import java.io.Serializable;
 
-public class UmsAdminRoleRelation implements Serializable {
+public class UserRoleRelation implements Serializable {
     private static final long serialVersionUID = 2120869894112984126L;
 
     private int id;
     private int adminId;
     private int roleId;
 
-    public UmsAdminRoleRelation() {
+    public UserRoleRelation() {
     }
 
     public int getId() {
@@ -38,7 +38,7 @@ public class UmsAdminRoleRelation implements Serializable {
 
     @Override
     public String toString() {
-        return "UmsAdminRoleRelation{" +
+        return "UserRoleRelation{" +
                 "id=" + id +
                 ", adminId=" + adminId +
                 ", roleId=" + roleId +

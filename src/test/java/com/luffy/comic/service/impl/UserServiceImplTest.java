@@ -1,6 +1,6 @@
 package com.luffy.comic.service.impl;
 
-import com.luffy.comic.service.UmsAdminService;
+import com.luffy.comic.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,22 +9,22 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class UmsAdminServiceImplTest {
+public class UserServiceImplTest {
     @Autowired
-    private UmsAdminService umsAdminService;
+    private UserService userService;
 
     @Test
     public void update() {
-        /*UmsAdmin admin = new UmsAdmin();
+        /*User admin = new User();
         admin.setId(1);
         admin.setPassword("missyou123.");
-        umsAdminService.update(admin);*/
+        userService.update(admin);*/
     }
 
     @Test
     public void login() {
         String username = "test";
         String password = "123456";
-        umsAdminService.login(username, password);
+        userService.login(username, password);
     }
 }

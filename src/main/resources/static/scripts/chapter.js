@@ -60,7 +60,7 @@ $(function () {
         step: 20,
         nowPage: 0,
         footer: $("#dropdown-footer"),
-        selector: $('.dropDown'),
+        menu: $('.dropDown'),
 
         getCurrentPage: function() {
             let windowHeight = $(window).height();
@@ -97,9 +97,8 @@ $(function () {
         },
 
 
-
         hideMenu: function() {
-            this.selector.hide()
+            this.menu.hide()
         },
 
         /**
@@ -140,7 +139,7 @@ $(function () {
           */
         rebuild: function() {
             this.nowPage = 0;
-            this.selector.show();
+            this.menu.show();
             this.documentLoad();
             localStorage.dropDown = true
         },
@@ -158,7 +157,7 @@ $(function () {
 
     let onePage = {
         select: $('.select-page'),
-        selector: $(".onePage"),
+        menu: $(".onePage"),
 
         getCurrentPage: function() {
             return currentPage;
@@ -166,7 +165,7 @@ $(function () {
 
         // 隐藏菜单
         hideMenu: function() {
-            this.selector.hide()
+            this.menu.hide()
         },
 
         // 跳转到指定页面
@@ -242,7 +241,7 @@ $(function () {
         },
 
         rebuild: function() {
-            this.selector.show();
+            this.menu.show();
             this.documentLoad()
         },
 

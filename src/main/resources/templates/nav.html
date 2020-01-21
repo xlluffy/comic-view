@@ -21,13 +21,14 @@
 			</ul>
 		</div>-->
 
-		<div class="collapse navbar-collapse justify-content-end">
+		<div class="collapse navbar-collapse justify-content-end" th:with="user=${#session.getAttribute('SPRING_SECURITY_CONTEXT').Authentication.Principal}">
 			<ul class="navbar-nav account">
-				<li class="nav-item login" id="login">
+				<li class="nav-item login" id="login" th:if="not ${user}">
 					<a class="nav-link" href="/admin/login">登陆</a>
 				</li>
 				<li class="nav-item dropdown" id="logout">
-					<a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="navbarDropdownMenuLink" role="button">
+					<a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown"
+					   href="#" id="navbarDropdownMenuLink" role="button" th:text="${user.username}">
 						profile
 					</a>
 					<div aria-labelledby="navbarDropdownMenuLink" class="dropdown-menu">

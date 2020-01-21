@@ -4,7 +4,7 @@ import com.luffy.comic.model.Comic;
 import com.luffy.comic.model.Record;
 import com.luffy.comic.service.ComicService;
 import com.luffy.comic.service.RecordService;
-import com.luffy.comic.service.UmsAdminService;
+import com.luffy.comic.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +19,7 @@ import java.util.Map;
 @RunWith(SpringRunner.class)
 public class ComicControllerTest {
     @Autowired
-    private UmsAdminService umsAdminService;
+    private UserService userService;
     @Autowired
     private ComicService comicService;
     @Autowired
@@ -27,7 +27,7 @@ public class ComicControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        umsAdminService.login("test", "123456");
+        userService.login("test", "123456");
     }
 
     @Test

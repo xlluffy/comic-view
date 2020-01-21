@@ -24,7 +24,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="title, index : ${chapters}">
+                <tr th:each="title, index : ${localChapters}">
                     <th scope="row" th:text="${index.count}"></th>
                     <td><a th:href="|/admin/comic/${comic.id}|" th:text="${title}"></a></td>
                     <td><a class="add-chapter" th:href="|/admin/comic/${comic.id}/add?title=${title}|">添加</a></td>

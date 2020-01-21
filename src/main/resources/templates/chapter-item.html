@@ -19,7 +19,7 @@
         </label>
     </div>
 
-    <div class="text-center row justify-content-center mt-4 mb-5" th:fragment="dropdown-menu(id)" th:id="${id}">
+    <div class="text-center row justify-content-center mt-4 mb-4 dropDown" th:fragment="dropdown-menu(id)" th:id="${id}">
         <button class="btn btn-info" th:if="${prev_chapter}" th:onclick="'javascript:location.href=&quot/chapter/' + ${prev_chapter}+'&quot'"
                 type="button">
             上一卷
@@ -34,7 +34,7 @@
         </button>
     </div>
 
-    <div class="text-center justify-content-center mt-4 mb-5" th:fragment="one-page-menu(id)" th:id="${id}">
+    <div class="text-center justify-content-center mt-4 mb-4 onePage" th:fragment="one-page-menu(id)" th:id="${id}">
         <button class="btn btn-info pre-chapter" th:if="${prev_chapter}" th:onclick="'javascript:location.href=&quot/chapter/' + ${prev_chapter}+'&quot'"
                 type="button">
             上一卷

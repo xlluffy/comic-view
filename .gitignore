@@ -26,3 +26,4 @@
 
 ### my ignore ###
 secret.properties
+/log/

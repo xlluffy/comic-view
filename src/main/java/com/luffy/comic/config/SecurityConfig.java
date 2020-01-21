@@ -1,12 +1,14 @@
 package com.luffy.comic.config;
 
+import com.luffy.comic.common.utils.CookieUtil;
 import com.luffy.comic.component.JwtAuthenticationTokenFilter;
-import com.luffy.comic.component.RestAuthenticationEntryPoint;
 import com.luffy.comic.component.RestfulAccessDeniedHandler;
 import com.luffy.comic.dto.AdminUserDetails;
-import com.luffy.comic.model.UmsAdmin;
-import com.luffy.comic.model.UmsPermission;
-import com.luffy.comic.service.UmsAdminService;
+import com.luffy.comic.model.Permission;
+import com.luffy.comic.model.User;
+import com.luffy.comic.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,12 +19,11 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import java.util.List;
 
@@ -34,19 +35,21 @@ import java.util.List;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private UmsAdminService adminService;
+    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+    private UserService adminService;
     private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
-    private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf()// 由于使用的是JWT，我们这里不需要csrf
                 .disable()
-                .sessionManagement()// 基于token，所以不需要session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+//                .sessionManagement()// 基于token，所以不需要session
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                .and()
                 .formLogin().loginPage("/admin/login")
                 .successForwardUrl("/comic/index").failureForwardUrl("/admin/login")
+                .and()
+                .logout().logoutUrl("/admin/logout").logoutSuccessUrl("/admin/login").logoutSuccessHandler(logoutSuccessHandler())
                 .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, // 允许对于网站静态资源的无授权访问
@@ -71,19 +74,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // 禁用缓存
         httpSecurity.headers().cacheControl();
         // 添加JWT filter
-        httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+//        httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         // 添加自定义未授权和未登录结果返回
         httpSecurity.exceptionHandling()
                 .accessDeniedHandler(restfulAccessDeniedHandler);
-//                .authenticationEntryPoint(restAuthenticationEntryPoint);
-//        httpSecurity.logout().logoutSuccessUrl("");
+        httpSecurity.sessionManagement().maximumSessions(10).expiredUrl("/admin/login");
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService())
                 .passwordEncoder(passwordEncoder());
-//        auth.eraseCredentials(false);
+        auth.eraseCredentials(false);
     }
 
     @Bean
@@ -95,12 +97,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public UserDetailsService userDetailsService() {
         //获取登录用户信息
         return username -> {
-            UmsAdmin admin = adminService.getAdminByUsername(username);
+            User admin = adminService.getAdminByUsername(username);
             if (admin != null) {
-                List<UmsPermission> permissionList = adminService.getPermissionList(admin.getId());
+                List<Permission> permissionList = adminService.getPermissionList(admin.getId());
                 return new AdminUserDetails(admin, permissionList);
             }
             throw new UsernameNotFoundException("用户名或密码错误");
+        };
+    }
+
+    @Bean
+    public LogoutSuccessHandler logoutSuccessHandler() {
+        return (httpServletRequest, httpServletResponse, authentication) -> {
+            try {
+                User user = (User) authentication.getPrincipal();
+                logger.info("USER: " + user.getUsername() + " LOGOUT SUCCESS.");
+                CookieUtil.removeCookie(httpServletRequest, httpServletResponse, "JSESSIONID");
+            } catch (Exception e) {
+                logger.info("LOGOUT EXCEPTION , e : " + e.getMessage());
+            }
+                httpServletResponse.sendRedirect("/admin/login");
         };
     }
 
@@ -116,17 +132,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    public void setAdminService(UmsAdminService adminService) {
+    public void setAdminService(UserService adminService) {
         this.adminService = adminService;
     }
 
     @Autowired
     public void setRestfulAccessDeniedHandler(RestfulAccessDeniedHandler restfulAccessDeniedHandler) {
         this.restfulAccessDeniedHandler = restfulAccessDeniedHandler;
-    }
-
-    @Autowired
-    public void setRestAuthenticationEntryPoint(RestAuthenticationEntryPoint restAuthenticationEntryPoint) {
-        this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
     }
 }

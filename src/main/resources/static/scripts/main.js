@@ -169,7 +169,7 @@ function textSummary() {
 }
 
 $(document).ready(function () {
-    auth();
+    // auth();
     pagination.init();
     textSummary();
     // login();

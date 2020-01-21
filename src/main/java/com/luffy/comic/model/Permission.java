@@ -3,7 +3,7 @@ package com.luffy.comic.model;
 import java.io.Serializable;
 import java.util.Date;
 
-public class UmsPermission implements Serializable {
+public class Permission implements Serializable {
     private static final long serialVersionUID = 2120869894112984126L;
 
     private int id;
@@ -17,11 +17,11 @@ public class UmsPermission implements Serializable {
     private int sort;
     private Date createTime;
 
-    public UmsPermission() {
+    public Permission() {
     }
 
-    public UmsPermission(int id, int pid, String name, String value, String icon, int type, String uri,
-                         int status, int sort, Date createTime) {
+    public Permission(int id, int pid, String name, String value, String icon, int type, String uri,
+                      int status, int sort, Date createTime) {
         this.id = id;
         this.pid = pid;
         this.name = name;
@@ -116,7 +116,7 @@ public class UmsPermission implements Serializable {
 
     @Override
     public String toString() {
-        return "UmsPermission{" +
+        return "Permission{" +
                 "id=" + id +
                 ", pid=" + pid +
                 ", name='" + name + '\'' +

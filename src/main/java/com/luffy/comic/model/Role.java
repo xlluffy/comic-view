@@ -3,7 +3,7 @@ package com.luffy.comic.model;
 import java.io.Serializable;
 import java.util.Date;
 
-public class UmsRole implements Serializable {
+public class Role implements Serializable {
     private static final long serialVersionUID = 2120869894112984125L;
 
     private int id;
@@ -14,11 +14,11 @@ public class UmsRole implements Serializable {
     private int status;
     private int sort;
 
-    public UmsRole() {
+    public Role() {
     }
 
-    public UmsRole(int id, String name, String description, int adminCount,
-                   Date createTime, int status, int sort) {
+    public Role(int id, String name, String description, int adminCount,
+                Date createTime, int status, int sort) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -86,7 +86,7 @@ public class UmsRole implements Serializable {
 
     @Override
     public String toString() {
-        return "UmsRole{" +
+        return "Role{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
