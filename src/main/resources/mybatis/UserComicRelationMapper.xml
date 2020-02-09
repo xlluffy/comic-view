@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.luffy.comic.mapper.UserComicRelationMapper">
+<!--    <cache/>-->
+    <select id="findFavouriteFromComics" resultType="Integer">
+        select comic_id from user_comic_relation where user_id = #{userId} and comic_id in
+        <foreach collection="comics" item="comic" index="index" open="(" separator="," close=")">
+            #{comic.id}
+        </foreach>
+    </select>
+</mapper>

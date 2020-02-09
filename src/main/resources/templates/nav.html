@@ -1,9 +1,11 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	  xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
-    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" type="text/css">
+	<link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+		  integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" rel="stylesheet">
 
     <title>Title</title>
 </head>
@@ -13,38 +15,36 @@
 		<a class="navbar-brand" href="/comic/index">
 			<img alt="" height="30" src="/favicon.ico" width="30">
 		</a>
-		<!--<div class="collapse navbar-collapse">
-			<ul class="navbar-nav mr-auto">
-				<li class="nav-item">
-					<a href="/comic/index" >主页</a>
-				</li>
-			</ul>
-		</div>-->
 
-		<div class="collapse navbar-collapse justify-content-end" th:with="user=${#session.getAttribute('SPRING_SECURITY_CONTEXT').Authentication.Principal}">
+		<div class="collapse navbar-collapse justify-content-end">
 			<ul class="navbar-nav account">
-				<li class="nav-item login" id="login" th:if="not ${user}">
-					<a class="nav-link" href="/admin/login">登陆</a>
+				<li class="nav-item mr-2">
+					<label class="sr-only" for="search">搜索</label>
+					<input class="form-control" id="search" placeholder="输入漫画或作者名称" type="text">
 				</li>
-				<li class="nav-item dropdown" id="logout">
+				<li class="nav-item login" id="login" sec:authorize="isAnonymous()">
+					<a class="nav-link" href="/login">登陆</a>
+				</li>
+				<li class="nav-item dropdown" id="logout" sec:authorize="!isAnonymous()"
+					th:with="user=${#session.getAttribute('SPRING_SECURITY_CONTEXT').Authentication.Principal}">
 					<a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown"
 					   href="#" id="navbarDropdownMenuLink" role="button" th:text="${user.username}">
 						profile
 					</a>
 					<div aria-labelledby="navbarDropdownMenuLink" class="dropdown-menu">
-						<a class="dropdown-item" href="#">profile</a>
-						<a class="dropdown-item" href="#">Something</a>
-						<a class="dropdown-item" href="/admin/logout">登出</a>
+						<a class="dropdown-item" th:href="|/user/${user.id}/favourite|">我的订阅</a>
+						<a class="dropdown-item" th:href="|/user/record|">历史记录</a>
+						<a class="dropdown-item" th:href="|/user/profile|">设置</a>
+						<a class="dropdown-item" href="/logout">登出</a>
 					</div>
 				</li>
-				<li class="nav-item dropdown" id="comic-admin">
+				<li class="nav-item dropdown" id="comic-admin" sec:authorize="hasRole('ADMIN')">
 					<a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button">
 						管理员
 					</a>
 					<div aria-labelledby="navbarDropdownMenuLink" class="dropdown-menu">
 						<a class="dropdown-item" href="/admin/comic/index">漫画管理</a>
-						<a class="dropdown-item" href="#">下载</a>
-						<a class="dropdown-item" href="">登出</a>
+						<a class="dropdown-item" href="/admin/account/index">账号管理</a>
 					</div>
 				</li>
 			</ul>
@@ -69,6 +69,6 @@
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
-<script src="/scripts/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"></script>
 </body>
 </html>

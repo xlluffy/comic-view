@@ -40,11 +40,11 @@ public class ComicServiceImplTest {
     @Test
     public void findByPage() {
         System.out.println("First page: ");
-        comicService.findByPage(1, 20).getList().forEach(System.out::println);
+        comicService.findByPage("createTime", true,1, 20).getList().forEach(System.out::println);
         System.out.println("Second page: ");
-        comicService.findByPage(2, 20).getList().forEach(System.out::println);
+        comicService.findByPage("createTime", true,2, 20).getList().forEach(System.out::println);
         System.out.println("Third page: ");
-        comicService.findByPage(3, 20).getList().forEach(System.out::println);
+        comicService.findByPage("createTime", true,3, 20).getList().forEach(System.out::println);
         System.out.println(comicService.count());
     }
 

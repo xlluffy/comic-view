@@ -32,10 +32,10 @@ public class ComicControllerTest {
 
     @Test
     public void login() {
-        List<Comic> comics = comicService.findByPage(1, 20).getList();
-        Record lastRecord = recordService.findLastOne();
+        List<Comic> comics = comicService.findByPage("createTime", true, 1, 20).getList();
+        Record lastRecord = recordService.findLastOne(2);
         int count = comicService.count();
         Comic comic = comicService.findByChapterId(lastRecord.getChapter().getId());
-        Map<Integer, Record> record = recordService.findAllByComics(comics);
+        Map<Integer, Record> record = recordService.findAllByComics(2, comics);
     }
 }

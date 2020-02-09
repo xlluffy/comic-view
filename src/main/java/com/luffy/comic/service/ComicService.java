@@ -3,6 +3,7 @@ package com.luffy.comic.service;
 import com.github.pagehelper.PageInfo;
 import com.luffy.comic.model.Comic;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,11 @@ public interface ComicService {
 
     Comic findNextComic(Integer id);
 
-    PageInfo<Comic> findByPage(Integer pageNum, Integer pageSize);
+    PageInfo<Comic> findByPage(String orderBy, boolean asc, Integer pageNum, Integer pageSize);
+
+    PageInfo<Comic> findByUserByPage(Integer userId, String orderBy, boolean asc, Integer pageNum, Integer pageSize);
+
+    PageInfo<Comic> findByAuthorByPage(String author, Integer pageNum, Integer pageSize);
 
     Map<String, Integer> findAddableLocalComics();
 
@@ -23,7 +28,17 @@ public interface ComicService {
 
     int count();
 
+    int countByAuthor(String author);
+
     void insert(Comic comic);
+
+    void addToFavourite(Integer userId, Integer comicId);
+
+    void deleteFavourite(Integer userId, Integer comicId);
+
+    Boolean hasFavouriteByUser(Integer userId, Integer comicId);
+
+    HashMap<Integer, Boolean> findFavouriteFromComics(Integer userId, List<Comic> comics);
 
     void insertByLocalTitle(String title);
 

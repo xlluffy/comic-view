@@ -26,4 +26,5 @@
 
 ### my ignore ###
 secret.properties
-/log/
+/log/*.log
+/log/*.zip

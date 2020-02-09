@@ -45,13 +45,13 @@ public class ChapterServiceImpl implements ChapterService {
 
     @Override
     public List<Chapter> findByComicId(Integer comicId) {
-        return chapterMapper.findByComicId(comicId);
+        return chapterMapper.findByComicId(comicId, "asc");
     }
 
     @Override
-    public PageInfo<Chapter> findByComicIdByPage(Integer comicId, Integer pageNum, Integer pageSize) {
+    public PageInfo<Chapter> findByComicIdByPage(Integer comicId, boolean asc, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<Chapter> chapters = chapterMapper.findByComicId(comicId);
+        List<Chapter> chapters = chapterMapper.findByComicId(comicId, asc ? "asc" : "desc");
         return new PageInfo<>(chapters);
     }
 

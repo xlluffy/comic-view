@@ -22,9 +22,9 @@ public interface ChapterMapper {
     @ResultMap("chapterMapper")
     Chapter findByTitle(String title);
 
-    @Select("select * from chapter where comic_id = #{comicId}")
+    @Select("select * from chapter where comic_id = #{comicId} order by id ${style}")
 //    @ResultMap("chapterMapper")
-    List<Chapter> findByComicId(Integer comicId);
+    List<Chapter> findByComicId(@Param("comicId") Integer comicId, @Param("style") String style);
 
     @Select("select title from chapter order by id")
     List<String> findAllTitles();

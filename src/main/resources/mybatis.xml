@@ -7,6 +7,9 @@
         <setting name="lazyLoadingEnabled" value="true" />
         <setting name="aggressiveLazyLoading" value="false" />
     </settings>-->
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
 
     <typeAliases>
         <typeAlias alias="Integer" type="java.lang.Integer"/>

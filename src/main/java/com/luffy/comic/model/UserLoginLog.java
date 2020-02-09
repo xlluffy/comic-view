@@ -7,7 +7,7 @@ public class UserLoginLog implements Serializable {
     private static final long serialVersionUID = 2120869894112984149L;
 
     private long id;
-    private int adminId;
+    private int userId;
     private String ip;
     private String address;
     private String userAgent;
@@ -16,9 +16,9 @@ public class UserLoginLog implements Serializable {
     public UserLoginLog() {
     }
 
-    public UserLoginLog(long id, int adminId, String ip, String address, String userAgent, Date createTime) {
+    public UserLoginLog(long id, int userId, String ip, String address, String userAgent, Date createTime) {
         this.id = id;
-        this.adminId = adminId;
+        this.userId = userId;
         this.ip = ip;
         this.address = address;
         this.userAgent = userAgent;
@@ -33,12 +33,12 @@ public class UserLoginLog implements Serializable {
         this.id = id;
     }
 
-    public int getAdminId() {
-        return adminId;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setAdminId(int adminId) {
-        this.adminId = adminId;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getIp() {
@@ -77,7 +77,7 @@ public class UserLoginLog implements Serializable {
     public String toString() {
         return "UserLoginLog{" +
                 "id=" + id +
-                ", adminId=" + adminId +
+                ", userId=" + userId +
                 ", ip='" + ip + '\'' +
                 ", address='" + address + '\'' +
                 ", userAgent='" + userAgent + '\'' +

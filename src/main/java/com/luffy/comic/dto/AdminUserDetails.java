@@ -15,18 +15,21 @@ import java.util.stream.Collectors;
  */
 public class AdminUserDetails extends User implements UserDetails {
     private List<Permission> permissionList;
+    private List<String> roleList;
 
-    public AdminUserDetails(User user, List<Permission> permissionList) {
+    public AdminUserDetails(User user, List<Permission> permissionList, List<String> roleList) {
         super(user);
         this.permissionList = permissionList;
+        this.roleList = roleList;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return permissionList.stream()
-                .filter(permission -> permission.getValue() != null)
-                .map(permission -> new SimpleGrantedAuthority(permission.getValue()))
-                .collect(Collectors.toList());
+        List<String> roles = permissionList.stream().
+                filter(permission -> permission.getValue() != null).
+                map(Permission::getValue).collect(Collectors.toList());
+        roles.addAll(roleList);
+        return roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
     @Override

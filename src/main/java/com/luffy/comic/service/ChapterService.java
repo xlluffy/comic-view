@@ -13,7 +13,7 @@ public interface ChapterService {
 
     List<Chapter> findByComicId(Integer comicId);
 
-    PageInfo<Chapter> findByComicIdByPage(Integer comicId, Integer pageNum, Integer pageSize);
+    PageInfo<Chapter> findByComicIdByPage(Integer comicId, boolean asc, Integer pageNum, Integer pageSize);
 
     Set<String> findAddableLocalChapter(Integer comicId);
 

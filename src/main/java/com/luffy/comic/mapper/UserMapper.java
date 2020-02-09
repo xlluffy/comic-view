@@ -44,4 +44,10 @@ public interface UserMapper {
             " values (#{username}, #{password}, #{email}, #{nickName}, #{icon}, #{note}, #{status})")
     @Options(useGeneratedKeys = true)
     void insert(User user);
+
+    @Update("update user set status = #{status} where id = #{userId}")
+    void disabledOrEnabledUser(Integer userId, Integer status);
+
+    @Select("select status from user where id = #{userId}")
+    int findStatus(Integer userId);
 }

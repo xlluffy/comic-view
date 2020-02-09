@@ -6,13 +6,15 @@ let currentPage = lastSyncId === 0 ? 1 : lastSyncId;
 function syncRecordPage(page) {
     // $.post("/record/update",
     //     JSON.stringify({"chapter": chapter, "page": String(page), "suffix": chapter.suffix}));
-    $.ajax({
-        url: "/record/update",
-        type: "post",
-        data: JSON.stringify({"chapter": chapter, "page": String(page), "suffix": chapter.suffix}),
-        dataType: "json",
-        contentType: "application/json"
-    });
+    if (user) {
+        $.ajax({
+            url: "/record/update",
+            type: "post",
+            data: JSON.stringify({"user": {"id": user.id}, "comic": chapter.comic, "chapter": chapter, "page": String(page), "suffix": chapter.suffix}),
+            dataType: "json",
+            contentType: "application/json"
+        });
+    } // 可以考虑为离线或者未注册用户添加本地记录
     lastSyncId = page;
 }
 
@@ -78,11 +80,18 @@ $(function () {
 
         appendPage: function(id) {
             let page = $("<div class='page'>");
-            let img = $("<img src='/{0}/{1}/{2}{3}' alt='/{0}/{1}/{2}{3}' class='page-img border border-light rounded mt-2 mb-2' /> "
-                .format(chapter.comic.title, chapter.title, id.format(3), chapter.suffix));
+            let img;
+            if (isMobile()) {
+                img = $("<img src='/{0}/{1}/{2}{3}' alt='/{0}/{1}/{2}{3}' class='page-img border border-light rounded mt-2 mb-2' /> "
+                    .format(chapter.comic.title, chapter.title, id.format(3), chapter.suffix));
+            } else {
+                img = $("<img src='/tmp-cover.png' alt='/{0}/{1}/{2}{3}' class='page-img border border-light rounded mt-2 mb-2' /> "
+                    .format(chapter.comic.title, chapter.title, id.format(3), chapter.suffix));
+            }
             let footer = $("<span class='footer text-secondary'>{0}/{1}</span>".format(id, chapter.pages));
             page.append(img).append("<br />").append(footer);
             container.append(page);
+
         },
 
         /**
@@ -286,7 +295,12 @@ $(function () {
         $("#menu-content").slideUp(800);
     });
 
-    clock();
+    if (!isMobile()) {
+        clock();
+    } else {
+        $('.container-fluid').css({'padding-left': 0, 'padding-right': 0});
+        $('.page-img').css('max-width', '100%')
+    }
 
     $("#btn-goto").click(function () {
         let n = parseInt($("#input-btn").val());

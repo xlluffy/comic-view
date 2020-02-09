@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.luffy.comic.mapper.ChapterMapper;
 import com.luffy.comic.mapper.ComicMapper;
+import com.luffy.comic.mapper.UserComicRelationMapper;
 import com.luffy.comic.model.Chapter;
 import com.luffy.comic.model.Comic;
 import com.luffy.comic.service.ComicService;
@@ -26,6 +27,7 @@ public class ComicServiceImpl implements ComicService {
 
     private ComicMapper comicMapper;
     private ChapterMapper chapterMapper;
+    private UserComicRelationMapper userComicRelationMapper;
 
     @Override
     public Comic findById(Integer id) {
@@ -39,7 +41,7 @@ public class ComicServiceImpl implements ComicService {
 
     @Override
     public List<Comic> findAll() {
-        return comicMapper.findAll();
+        return comicMapper.findAll("id", "asc");
     }
 
     @Override
@@ -48,10 +50,31 @@ public class ComicServiceImpl implements ComicService {
     }
 
     @Override
-    public PageInfo<Comic> findByPage(Integer pageNum, Integer pageSize) {
+    public PageInfo<Comic> findByPage(String orderBy, boolean asc, Integer pageNum, Integer pageSize) {
+        String style = asc ? "asc" : "desc";
         PageHelper.startPage(pageNum, pageSize);
-        List<Comic> comics = comicMapper.findAll();
-        return new PageInfo<>(comics);
+        if ("title".equals(orderBy)) {
+            return new PageInfo<>(comicMapper.findAll("title", style));
+        } else {
+            return new PageInfo<>(comicMapper.findAll("id", style));
+        }
+    }
+
+    @Override
+    public PageInfo<Comic> findByUserByPage(Integer userId, String orderBy, boolean asc, Integer pageNum, Integer pageSize) {
+        String style = asc ? "asc" : "desc";
+        PageHelper.startPage(pageNum, pageSize);
+        if ("title".equals(orderBy)) {
+            return new PageInfo<>(comicMapper.findAllByUserOrderByTitle(userId, style));
+        } else {
+            return new PageInfo<>(comicMapper.findAllByUserOrderByCreateTime(userId, style));
+        }
+    }
+
+    @Override
+    public PageInfo<Comic> findByAuthorByPage(String author, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        return new PageInfo<>(comicMapper.findByAuthor(author));
     }
 
     @Override
@@ -83,8 +106,39 @@ public class ComicServiceImpl implements ComicService {
     }
 
     @Override
+    public int countByAuthor(String author) {
+        return comicMapper.countByAuthor(author);
+    }
+
+    @Override
     public void insert(Comic comic) {
         comicMapper.insert(comic);
+    }
+
+    @Override
+    public void addToFavourite(Integer userId, Integer comicId) {
+        userComicRelationMapper.insert(userId, comicId);
+    }
+
+    @Override
+    public void deleteFavourite(Integer userId, Integer comicId) {
+        userComicRelationMapper.delete(userId, comicId);
+    }
+
+    @Override
+    public Boolean hasFavouriteByUser(Integer userId, Integer comicId) {
+        return userComicRelationMapper.hasFavouriteByUser(userId, comicId);
+    }
+
+    @Override
+    public HashMap<Integer, Boolean> findFavouriteFromComics(Integer userId, List<Comic> comics) {
+        HashMap<Integer, Boolean> resultMap = new HashMap<>();
+        if (comics != null && comics.size() > 0) {
+            for (Integer x : userComicRelationMapper.findFavouriteFromComics(userId, comics)) {
+                resultMap.put(x, true);
+            }
+        }
+        return resultMap;
     }
 
     @Override
@@ -157,5 +211,10 @@ public class ComicServiceImpl implements ComicService {
     @Autowired
     public void setChapterMapper(ChapterMapper chapterMapper) {
         this.chapterMapper = chapterMapper;
+    }
+
+    @Autowired
+    public void setUserComicRelationMapper(UserComicRelationMapper userComicRelationMapper) {
+        this.userComicRelationMapper = userComicRelationMapper;
     }
 }

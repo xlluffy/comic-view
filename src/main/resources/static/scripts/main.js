@@ -52,27 +52,23 @@ function splitCookies() {
     return cookieMap
 }
 
-function login() {
-    $('.form-signin').submit(function (event) {
-        event.preventDefault();
-        $.post('/admin/loginAuth', $('.form-signin').serialize(), function (response) {
-            if (response.code === 200) {
-                localStorage.setItem('Authorization', response.data.tokenHead + ' ' + response.data.token);
-                location.href = '/comic/index';
-            }
-        })
-    })
+function isMobile() {
+    return /Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent);
 }
 
-function auth() {
-    let cookies = splitCookies();
-    if (cookies['Authorization'] != null && cookies['Authorization'] !== undefined) {
-        $('.account').show();
-        $('#login').hide();
-    } else {
-        $('.account').hide();
-        $('#login').show();
+// username的额外匹配规则...
+function checkName(input) {
+    const value = input.val();
+    const length = value.length;
+    let count = 0;
+    for (let i = 0; i < length; i++) {
+        if (value.charCodeAt(i) < 256) {
+            count++;
+        } else {
+            count += 2;
+        }
     }
+    return count >= 4 && count <= 16;
 }
 
 let pagination = {
@@ -168,17 +164,306 @@ function textSummary() {
     })
 }
 
+/**
+ * 求最长公共子序列
+ * @param str1
+ * @param str2
+ * @return [] 最长子序列在str1中的位置
+ */
+function lcs(str1, str2) {
+    // TODO: 优化trace部分
+    let dp = [];
+    for (let i = 0; i <= str1.length; i++) {
+        let line = [];
+        for (let i = 0; i <= str2.length; i++) {
+            line.push(0)
+        }
+        dp.push(line);
+    }
+    for (let i = 1; i <= str1.length; i++) {
+        for (let j = 1; j <= str2.length; j++) {
+            if (str1[i-1] === str2[j-1]) {
+                dp[i][j] = dp[i - 1][j-1] + 1;
+            } else {
+                dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1])
+            }
+        }
+    }
+    let i = str1.length;
+    let j = str2.length;
+    let trace = [];
+    while (i >= 1 && j >=1) {
+        if (str1[i-1] === str2[j-1]) {
+            trace.push(str1[i-1]);
+            i--;
+            j--
+        } else {
+            if (dp[i][j-1] > dp[i-1][j]) {
+                j--
+            } else i--
+        }
+    }
+    trace.reverse();
+    let result = [];
+    let k = 0;
+    let t = 0;
+    while (k < trace.length) {
+        if (str1[t] === trace[k]) {
+            k++;
+            result[t] = true;
+        } else result[t] = false;
+        t++;
+    }
+    return result;
+}
+
+let searchTips = {
+    tips: null,
+    data: [],
+    localTipsData: localStorage.searchTips === undefined ? [] : JSON.parse(localStorage.searchTips),
+    show: function() {
+        if (!this.focus) {
+            this.focus = true;
+            this.inputTxt = '';
+            $(document).on('mousedown.a', ((e) => {
+                if (!$.contains(this.parent.get(0), e.target)) {
+                    this.hide();
+                }
+            }));
+            this.search(this.initTips);
+            this.tips.show(300);
+        }
+    },
+
+    hide: function() {
+        this.focus = false;
+        $(document).off('mousedown.a');
+        this.nowTip = null;
+        this.tips.hide()
+    },
+
+    tipsClickEvent: function() {
+        let data = $(this).text();
+        if (data.substr(0, 5) === '历史记录:') {
+            data = data.slice(6)
+        }
+        let arr = searchTips.localTipsData;
+        const index = arr.indexOf(data);
+        if (index !== -1) {
+            if (arr.length > 1) {
+                arr[index] = arr[0];
+                arr[0] = data;
+            }
+        } else {
+            if (arr.length >= 20) { // 最多存储20条记录
+                arr.pop();
+            }
+            arr.unshift(data);
+        }
+        localStorage.searchTips = JSON.stringify(arr);
+        location.href = $(this).attr('data-href');
+    },
+
+    initTips: function() {
+        // 远程提示
+        let remoteTips = $('<ul id="remote-tips"></ul>');
+        let length = Math.min(6, this.data.length);
+        for (let i = 0; i < length; i++) {
+            if (this.isComic) {
+                remoteTips.append($('<li class="search-item pt-2 pl-2" data-href=\"/comic/' + this.data[i].id + '\">'
+                    + this.data[i].title + '</li>'))
+            } else {
+                remoteTips.append($('<li class="search-item pt-2 pl-2" data-href=\"/esComic/search?author=' + this.data[i] + '\">'
+                    + this.data[i] + '</li>'));
+            }
+        }
+        // 本地记录
+        length = Math.min(5, this.localTipsData.length);
+        let localTips = $('<ul id="local-tips"></ul>');
+        for (let i = 0; i < length; i++) {
+            localTips.append($('<li class="search-item pt-2 pl-2" data-href=\"/esComic/search?keyword=' + this.localTipsData[i] + '\">'
+                            + this.localTipsData[i] + '</li>'))
+        }
+        this.tips.empty();
+        this.tips.append('<div class="row text-muted pt-2 ml-2 mr-2 align-self-end border-bottom">热搜</div>').append(remoteTips)
+            .append('<div class="row text-muted ml-2 mr-2 align-self-end border-bottom">本地记录</div>').append(localTips);
+
+        $('#remote-tips, #local-tips').on('click', 'li', this.tipsClickEvent);
+    },
+
+    realTimeTips: function() {
+        if (this.inputTxt === "") {
+            this.initTips();
+            return
+        }
+        this.tips.empty();
+        let tips = $('<ul id="real-time-tips"></ul>');
+        let count = 0;
+        for (let i = 0; i < this.localTipsData.length && count < 3; i++) {
+            let j = 0;
+            for (; j < this.inputTxt.length; j++) {
+                if (this.inputTxt[j] !== this.localTipsData[i][j]) {
+                    break
+                }
+            }
+            if (j === this.inputTxt.length) {
+                count++;
+                tips.append($('<li class="search-item pt-2 pl-2" data-href=\"/esComic/search?keyword=' + this.localTipsData[i] + '\">'
+                    + '历史记录: <b class="text-primary">'
+                    + this.inputTxt + '</b>' + this.localTipsData[i].substring(j) + '</li>'))
+            }
+        }
+        const length = Math.min(10 - count, this.data.length);
+        for (let i = 0; i < length; i++) {
+            let tip;
+            let title;
+            if (this.isComic) {
+                tip = '<li class="search-item pt-2 pl-2" data-href=\"/comic/' + this.data[i].id + '\">';
+                title = this.data[i].title;
+            } else {
+                tip = '<li class="search-item pt-2 pl-2" data-href=\"/esComic/search?author=' + this.data[i] + '\">';
+                title = this.data[i];
+            }
+            let trace = lcs(title.toLowerCase(), this.inputTxt);
+            for (let j = 0; j < title.length; j++) {
+                if (trace[j]) {
+                    tip += '<b class="text-primary">' + title[j] + '</b>';
+                } else {
+                    tip += title[j];
+                }
+            }
+            tips.append($(tip + '</a></li>'))
+        }
+        this.tips.append(tips);
+        $('#real-time-tips').on('click', 'li', this.tipsClickEvent);
+    },
+
+    search: function(callback) {
+        let data = this.inputTxt === '' ? {} : {keyword: this.inputTxt};
+        $.get('/esComic/search/simple', data, (msg) => {
+            if (msg.code === 200) {
+                this.isComic = msg.data.keyword;
+                this.data = msg.data.data;
+                callback.apply(this);
+            }
+        });
+    },
+
+    create: function(input, data, options) {
+        this.tips = $('<div id="search-tips" class="mt-1"></div>').css({width: input.outerWidth()});
+        this.hide();
+        input.focus(() => {
+            this.show();
+        });
+
+        input.one('focus', () => {
+            this.parent = input.parent();
+            this.parent.append(this.tips);
+        });
+
+        let cpLock = false;
+        input.on('compositionstart', function() {
+            cpLock = true;
+        });
+        input.on('compositionend', () => {
+            cpLock = false;
+            if (this.nowTip != null) {
+                this.nowTip.removeClass('hover');
+                this.nowTip = null;
+            }
+            let inputTxt = input.val().trim();
+            if (Math.abs(inputTxt.length - this.inputTxt.length) > 0) {
+                this.inputTxt = inputTxt;
+                this.search(this.realTimeTips)
+            }
+        });
+        input.on('input', () => {
+            if (!cpLock) {
+                if (this.nowTip != null) {
+                    this.nowTip.removeClass('hover');
+                    this.nowTip = null;
+                }
+                setTimeout(() => {
+                    let inputTxt = input.val().trim();
+                    if (Math.abs(inputTxt.length - this.inputTxt.length) > 0) {
+                        this.inputTxt = inputTxt;
+                        this.search(this.realTimeTips)
+                    }
+                }, 500)
+            }
+        });
+        input.on('keydown', (e) => {
+            // TODO: 切换加入localTips
+            switch (e.keyCode) {
+                case 9: // tab, 直接触发down...
+                    e.preventDefault();
+                    let e1 = $.Event('keydown', {keyCode: 40});
+                    input.trigger(e1);
+                    break;
+                case 27: // esc
+                    this.hide();
+                    input.blur();
+                    break;
+                case 13: // enter
+                    const inputTxt = input.val().trim();
+                    if (inputTxt.length > 0) {
+                        if (this.nowTip != null) {
+                            this.nowTip.click();
+                        } else {
+                            location.href = '/esComic/search?keyword=' + inputTxt
+                        }
+                    }
+                    break;
+                case 38: // up
+                    if (this.nowTip && this.nowTip.length > 0) {
+                        this.nowTip.removeClass('hover');
+                    }
+                    this.nowTip = this.nowTip.prev('li');
+                    this.nowTip.addClass('hover');
+                    input.val(this.nowTip.text());
+                    break;
+                case 40: // down
+                    if (this.nowTip == null || this.nowTip.length === 0) {
+                        this.nowTip = this.tips.find('li').eq(0);
+                    } else {
+                        this.nowTip.removeClass('hover');
+                        this.nowTip = this.nowTip.next('li')
+                    }
+                    this.nowTip.addClass('hover');
+                    input.val(this.nowTip.text());
+                    break;
+            }
+        })
+    },
+};
+
+function hideSecret() {
+    $('.secret').each(function () {
+        let email = $(this).text();
+        let pos = email.search('@');
+        let host = email.substring(0, pos);
+        $(this).text(host[0] + '...' + host[host.length - 1] + email.substring(pos));
+    });
+}
+
 $(document).ready(function () {
     // auth();
     pagination.init();
     textSummary();
+    // searchTooltip();
+    hideSecret();
     // login();
     $('[data-toggle="tooltip"]').tooltip();
+
     $('.breadcrumb-item:last-child').addClass('active').attr('aria-current','page')
                                     .html(function() {return $(this).text()});
     $('.comic-info').click(function() {
 
     });
+
+    if (!isMobile()) {
+        $('.sidebar img, .card>a img, .record img, .page-img').attr('src', '/tmp-cover.png');
+    }
 
     $('.delete-comic').bind('click', deleteComicEvent);
     $('.add-chapter, .add-comic').click(function(e) {
@@ -193,5 +478,110 @@ $(document).ready(function () {
             }
         })
     });
-});
 
+    $('form.profile').submit(function (e) {
+        e.preventDefault();
+        let formData = new FormData(this);
+        $.ajax({
+            'url': '/user/profile/update',
+            'type': 'post',
+            'data': JSON.stringify({"nickName": formData.get("nickName"), "note": formData.get("note")}),
+            dataType: "json",
+            contentType: "application/json",
+            'success': function (msg) {
+                if (msg.code === 200) {
+                    console.log("上传成功")
+                }
+            }
+        });
+    });
+
+    $('.btn-email').click(function() {
+        let oldEmail = $('#oldEmail').val();
+        let newEmail = $('#newEmail').val();
+        if (oldEmail !== newEmail) {
+            $.post('/user/profile/updateEmail', {'oldEmail': oldEmail, 'newEmail': newEmail},
+                function (msg) {
+                    if (msg.code === 200) {
+                        console.log('邮箱更改成功');
+                    }
+                })
+        }
+    });
+
+    $('.btn-password').click(function() {
+        let oldPwd = $('#oldPassword').val();
+        let newPwd = $('#newPassword').val();
+        let repeatPwd = $('#repeatPassword').val();
+        if (oldPwd !== newPwd && newPwd === repeatPwd) {
+            $.post('/user/profile/updatePwd', {'oldPwd': oldPwd, 'newPwd': newPwd},
+                function (msg) {
+                    if (msg.code === 200) {
+                        alert('密码修改成功，请重新登陆');
+                        location.href = '/login'
+                    }
+                })
+        }
+    });
+
+    /*$('.record-delete').click(function() {
+    })*/
+    $('.btn-favourite').click(function(e) {
+        e.preventDefault();
+        let selector = $(this).find('img');
+        let comicId = $(this).attr('name');
+        if (selector.attr('src') === '/images/icons/heart.svg') {
+            $.post('/comic/' + comicId + '/addFavourite', {}, function(msg) {
+                if (msg.code === 200) {
+                    selector.attr('src', '/images/icons/heart-fill.svg');
+                    selector.attr('title', '取消订阅')
+                }
+            });
+        } else {
+            $.post('/comic/' + comicId + '/deleteFavourite', {}, function(msg) {
+                if (msg.code === 200) {
+                    selector.attr('src', '/images/icons/heart.svg');
+                    selector.attr('title', '订阅')
+                }
+            });
+        }
+    });
+
+    $('.add-roles').change(function() {
+        $.post('/admin/account/addRole', {'userId': $(this).attr('name'),
+            'role': $(this).find('option:selected').val()},
+            function (msg) {
+                if (msg.code === 200) {
+                    console.log('添加权限成功');
+                    location.reload();
+                }
+            })
+    });
+
+    $('.remove-roles').change(function() {
+        $.post('/admin/account/removeRole', {'userId': $(this).attr('name'),
+                'role': $(this).find('option:selected').val()},
+            function (msg) {
+                if (msg.code === 200) {
+                    console.log('添加权限成功');
+                    location.reload();
+                }
+            })
+    });
+
+    $('.status-checkbox').click(function() {
+        let selector = $(this);
+        if (selector.attr('checked') === 'checked') {
+            $.post('/admin/account/disabledUser', {'userId': selector.val()}, function () {
+                selector.removeAttr('checked')
+            })
+        } else {
+            $.post('/admin/account/enabledUser', {'userId': selector.val()});
+            selector.attr('checked', 'checked');
+        }
+    });
+
+    // $('.delete-user').click(function() {});
+
+    searchTips.create($('#search'));
+});

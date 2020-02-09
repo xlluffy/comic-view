@@ -1,18 +1,22 @@
 package com.luffy.comic.service;
 
-import com.luffy.comic.model.Permission;
 import com.luffy.comic.model.User;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 后台管理员service
  */
 public interface UserService {
     /**
-     * 根据用户名获取后台管理员
+     * 根据用户名获取用户
      */
-    User getAdminByUsername(String username);
+    User getUserByUsername(String username);
+
+    /**
+     * 根据邮箱获取用户
+     */
+    User getUserByEmail(String email);
 
     /**
      * 注册功能
@@ -27,6 +31,8 @@ public interface UserService {
      */
     void login(String username, String password);
 
+    void loginLog(HttpServletRequest request, User user);
+
     /**
      * 登录功能 - 使用jwt
      * @param username 用户名
@@ -40,10 +46,9 @@ public interface UserService {
      */
     void logout();
 
-    void update(User user);
+    void update(HttpServletRequest request, User user);
 
-    /**
-     * 获取用户所有权限（包括角色权限和+-权限）
-     */
-    List<Permission> getPermissionList(int adminId);
+    void updateEmail(HttpServletRequest request, String oldEmail, String newEmail);
+
+    boolean updatePwd(HttpServletRequest request, String oldPwd, String newPwd);
 }

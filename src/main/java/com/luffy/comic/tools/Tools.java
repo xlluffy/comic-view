@@ -1,5 +1,8 @@
 package com.luffy.comic.tools;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Tools {
 
     @SafeVarargs
@@ -16,5 +19,15 @@ public class Tools {
 
     public static String splitSuffix(String filename) {
         return filename.substring(filename.indexOf('.'));
+    }
+
+    public static <T> List<T> removeAll(List<T> A, List<T> B) {
+        List<T> result = new ArrayList<>(A.size() - B.size());
+        for (T e : A) {
+            if (!B.contains(e)) {
+                result.add(e);
+            }
+        }
+        return result;
     }
 }

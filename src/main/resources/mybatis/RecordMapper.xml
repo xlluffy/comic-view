@@ -5,9 +5,9 @@
 <mapper namespace="com.luffy.comic.mapper.RecordMapper">
     <cache/>
 
-    <select id="findByChapters" resultMap="recordMapper">
-        select * from record where chapter_id in
-        <foreach collection="list" item="chapter" index="index" open="(" separator="," close=")">
+    <select id="findByChapters" resultMap="recordMapper2">
+        select * from record where user_id = #{userId} and chapter_id in
+        <foreach collection="chapters" item="chapter" index="index" open="(" separator="," close=")">
             #{chapter.id}
         </foreach>
     </select>
@@ -15,9 +15,10 @@
     <update id="updateByChapterId" useGeneratedKeys="true" keyProperty="id">
         update record
         <set>
+            <if test="comic.id != null">comic_id = #{comic.id},</if>
             <if test="page != null">page = #{page},</if>
             <if test="suffix != null">suffix = #{suffix},</if>
         </set>
-        where chapter_id = #{chapter.id}
+        where user_id = #{user.id} and chapter_id = #{chapter.id}
     </update>
 </mapper>

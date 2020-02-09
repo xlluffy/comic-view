@@ -1,5 +1,11 @@
 package com.luffy.comic.model;
 
+import com.luffy.comic.common.utils.validation.constrations.CodePointSize;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -7,11 +13,26 @@ public class User implements Serializable {
     private static final long serialVersionUID = 2120869894112984148L;
 
     private int id;
+
+    @CodePointSize(min = 4, max = 16)
+    @Pattern(regexp = "^(?![0-9_])[a-zA-Z0-9_\\u4e00-\\u9fa5]+$")
     private String username;
+
+    @Size(min = 6, max = 16)
+    @Pattern(regexp = "^[\\x21-\\x7e]{6,16}$")
     private String password;
+
+    @NotEmpty
+    @Email
     private String email;
+
+    @CodePointSize(min = 4, max = 16)
+    @Pattern(regexp = "^(?![0-9_])[a-zA-Z0-9_\\u4e00-\\u9fa5]+$")
     private String nickName;
+
     private String icon;
+
+    @Size(max = 500)
     private String note;
     private Date createTime;
     private Date loginTime;

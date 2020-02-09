@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface RoleMapper {
 
-    @Select("select r.* from user_role_relation as ar, role as r where ar.admin_id = #{adminId} and ar.role_id = r.id")
-    List<Role> findRolesByAdminId(Integer adminId);
+    @Select("select r.* from user_role_relation as ar, role as r where ar.user_id = #{userId} and ar.role_id = r.id")
+    List<Role> findRolesByUserId(Integer userId);
 }

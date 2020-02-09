@@ -11,23 +11,27 @@ import java.util.Map;
 public interface RecordService {
     List<Record> findAll();
 
-    Map<Integer, Record> findAllByComics(List<Comic> comics);
+    Map<Integer, Record> findAllByComics(Integer userId, List<Comic> comics);
 
-    Map<Integer, String> findAllByChapters(List<Chapter> chapters);
+    Map<Integer, String> findAllByChapters(Integer userId, List<Chapter> chapters);
 
-    Record findByChapterId(Integer chapterId);
+    Record findByChapterId(Integer userId, Integer chapterId);
 
-    PageInfo<Record> findByComicIdByPage(Integer comicId, Integer pageSize, Integer pageNum);
+    PageInfo<Record> findByComicIdByPage(Integer userId, Integer comicId, Integer pageNum, Integer pageSize);
 
-    List<Record> findByChapters(List<Chapter> chapters);
+    List<Record> findByChapters(Integer userId, List<Chapter> chapters);
 
-    Record findLastOne();
+    Record findLastOne(Integer userId);
 
-    Record findLastOneByComicId(Integer comicId);
+    PageInfo<Record> findAllLastOneOfComicsByPage(Integer userId, Integer pageNum, Integer pageSize);
 
-    List<Record> findLastOneByComics(List<Comic> comics);
+    Record findLastOneByComicId(Integer userId, Integer comicId);
+
+    List<Record> findLastOneByComics(Integer userId, List<Comic> comics);
 
     boolean updateByChapterId(Record record);
 
     void insert(Record record);
+
+    void deleteById(Integer id);
 }
