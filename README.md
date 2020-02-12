@@ -16,7 +16,7 @@
 database.username = 你的账号
 database.password = 你的密码
 ```
->启用`ElasticSearch`搜索
+> 启用`ElasticSearch`搜索
 4. 下载并安装
    [Elasticsearch](https://www.elastic.co/cn/downloads/past-releases#elasticsearch)
    和[Kibana](https://www.elastic.co/cn/downloads/past-releases#kibana)，
