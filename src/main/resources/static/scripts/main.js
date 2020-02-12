@@ -461,9 +461,9 @@ $(document).ready(function () {
 
     });
 
-    if (!isMobile()) {
+    /*if (!isMobile()) {
         $('.sidebar img, .card>a img, .record img, .page-img').attr('src', '/tmp-cover.png');
-    }
+    }*/
 
     $('.delete-comic').bind('click', deleteComicEvent);
     $('.add-chapter, .add-comic').click(function(e) {
@@ -477,51 +477,6 @@ $(document).ready(function () {
                 }
             }
         })
-    });
-
-    $('form.profile').submit(function (e) {
-        e.preventDefault();
-        let formData = new FormData(this);
-        $.ajax({
-            'url': '/user/profile/update',
-            'type': 'post',
-            'data': JSON.stringify({"nickName": formData.get("nickName"), "note": formData.get("note")}),
-            dataType: "json",
-            contentType: "application/json",
-            'success': function (msg) {
-                if (msg.code === 200) {
-                    console.log("上传成功")
-                }
-            }
-        });
-    });
-
-    $('.btn-email').click(function() {
-        let oldEmail = $('#oldEmail').val();
-        let newEmail = $('#newEmail').val();
-        if (oldEmail !== newEmail) {
-            $.post('/user/profile/updateEmail', {'oldEmail': oldEmail, 'newEmail': newEmail},
-                function (msg) {
-                    if (msg.code === 200) {
-                        console.log('邮箱更改成功');
-                    }
-                })
-        }
-    });
-
-    $('.btn-password').click(function() {
-        let oldPwd = $('#oldPassword').val();
-        let newPwd = $('#newPassword').val();
-        let repeatPwd = $('#repeatPassword').val();
-        if (oldPwd !== newPwd && newPwd === repeatPwd) {
-            $.post('/user/profile/updatePwd', {'oldPwd': oldPwd, 'newPwd': newPwd},
-                function (msg) {
-                    if (msg.code === 200) {
-                        alert('密码修改成功，请重新登陆');
-                        location.href = '/login'
-                    }
-                })
-        }
     });
 
     /*$('.record-delete').click(function() {

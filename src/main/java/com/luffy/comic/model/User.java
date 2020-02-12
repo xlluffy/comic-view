@@ -1,9 +1,10 @@
 package com.luffy.comic.model;
 
 import com.luffy.comic.common.utils.validation.constrations.CodePointSize;
+import com.luffy.comic.dto.UserProfileParamForm;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -16,18 +17,21 @@ public class User implements Serializable {
 
     @CodePointSize(min = 4, max = 16)
     @Pattern(regexp = "^(?![0-9_])[a-zA-Z0-9_\\u4e00-\\u9fa5]+$")
+    @NotNull
     private String username;
 
     @Size(min = 6, max = 16)
     @Pattern(regexp = "^[\\x21-\\x7e]{6,16}$")
+    @NotNull
     private String password;
 
-    @NotEmpty
-    @Email
+    @NotNull
+    @Email(regexp = "^[\\w\\u4e00-\\u9fa5]+@\\w+\\.\\w+$")
     private String email;
 
     @CodePointSize(min = 4, max = 16)
     @Pattern(regexp = "^(?![0-9_])[a-zA-Z0-9_\\u4e00-\\u9fa5]+$")
+    @NotNull
     private String nickName;
 
     private String icon;
@@ -58,6 +62,11 @@ public class User implements Serializable {
     public User(User old) {
         this(old.getId(), old.getUsername(), old.getPassword(), old.getEmail(), old.getNickName(),
                 old.getIcon(), old.getNote(), old.getCreateTime(), old.getLoginTime(), old.getStatus());
+    }
+
+    public User(UserProfileParamForm old) {
+        this(old.getId(), old.getUsername(), old.getPassword(), old.getEmail(), old.getNickName(),
+                old.getIcon(), old.getNote(), null, null, 1);
     }
 
     public int getId() {

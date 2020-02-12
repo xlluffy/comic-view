@@ -19,14 +19,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Api(tags = "ComicController")
 @Controller
-@RequestMapping("/comic")
 public class ComicController {
     private static final Log logger = LogFactory.getLog(ComicController.class);
 
@@ -41,13 +39,13 @@ public class ComicController {
     }
 
     @ApiOperation("获取漫画列表信息")
-    @GetMapping("/index")
+    @GetMapping({"/", "/index"})
 //    @PreAuthorize("hasAuthority('comic:comic:read')")
     public String index(@RequestParam(name = "orderBy", defaultValue = "createTime") String orderBy,
                         @RequestParam(name = "asc", defaultValue = "true") boolean asc,
                         @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
                         @RequestParam(name = "pageSize", defaultValue = "20") int pageSize,
-                        Model model, HttpSession session) {
+                        Model model) {
         PageInfo<Comic> pages = comicService.findByPage(orderBy, asc, pageNum, pageSize);
         model.addAttribute("pages", pages);
         User user = SecurityUtil.getCurrentUser();
@@ -58,7 +56,7 @@ public class ComicController {
     }
 
     @ApiOperation("根据漫画id获取漫画章节")
-    @GetMapping("/{id}")
+    @GetMapping("/comic/{id}")
 //    @PreAuthorize("hasAuthority('comic:comic:read')")
     public String getComic(@PathVariable int id,
                            @RequestParam(name = "asc", defaultValue = "false") boolean asc,
@@ -87,7 +85,7 @@ public class ComicController {
     }
 
     @ApiOperation("订阅漫画")
-    @PostMapping("/{id}/addFavourite")
+    @PostMapping("/comic/{id}/addFavourite")
     @PreAuthorize("hasRole('USER')")
     @ResponseBody
     public CommonResult addFavourite(@PathVariable int id) {
@@ -96,7 +94,7 @@ public class ComicController {
     }
 
     @ApiOperation("订阅漫画")
-    @PostMapping("/{id}/deleteFavourite")
+    @PostMapping("/comic/{id}/deleteFavourite")
     @PreAuthorize("hasRole('USER')")
     @ResponseBody
     public CommonResult deleteFavourite(@PathVariable int id) {
@@ -105,7 +103,7 @@ public class ComicController {
     }
 
     @ApiOperation("根据漫画id获取下一个漫画")
-    @GetMapping("/nextComic")
+    @GetMapping("/comic/nextComic")
 //    @PreAuthorize("hasAuthority('comic:comic:read')")
     @ResponseBody
     public CommonResult getNextComic(@RequestParam int id) {

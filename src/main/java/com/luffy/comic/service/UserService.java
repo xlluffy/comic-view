@@ -1,5 +1,6 @@
 package com.luffy.comic.service;
 
+import com.luffy.comic.dto.UserProfileParamForm;
 import com.luffy.comic.model.User;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,9 +47,9 @@ public interface UserService {
      */
     void logout();
 
-    void update(HttpServletRequest request, User user);
+    void update(UserProfileParamForm user);
 
-    void updateEmail(HttpServletRequest request, String oldEmail, String newEmail);
+    boolean updateEmail(String oldEmail, String newEmail);
 
-    boolean updatePwd(HttpServletRequest request, String oldPwd, String newPwd);
+    boolean updatePwd(String oldPwd, String newPwd);
 }

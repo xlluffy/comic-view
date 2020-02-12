@@ -112,7 +112,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 logger.info("USER: " + user.getUsername() + " LOGIN SUCCESS.");
 //                session.setMaxInactiveInterval(10);
                 userService.loginLog(request, user);
-                response.sendRedirect("/comic/index");
+                response.sendRedirect("/");
             } catch (Exception e) {
                 logger.info("LOGIN EXCEPTION, e :" + e.getMessage());
             }

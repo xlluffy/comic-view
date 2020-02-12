@@ -17,6 +17,8 @@ public class CodePointsSizeValidator implements ConstraintValidator<CodePointSiz
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (value == null) // null值不校检
+            return true;
         int count = 0;
         for (int i = 0; i < value.length(); i++) {
             if (value.codePointAt(i) < 256) {

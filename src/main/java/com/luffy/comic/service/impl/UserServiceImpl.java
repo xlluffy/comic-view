@@ -2,6 +2,7 @@ package com.luffy.comic.service.impl;
 
 import com.luffy.comic.common.utils.JwtTokenUtil;
 import com.luffy.comic.common.utils.SecurityUtil;
+import com.luffy.comic.dto.UserProfileParamForm;
 import com.luffy.comic.mapper.UserLoginLogMapper;
 import com.luffy.comic.mapper.UserMapper;
 import com.luffy.comic.mapper.UserRoleRelationMapper;
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.regex.Pattern;
 
 /**
  * UmsAdminService的实现类
@@ -124,11 +126,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void update(HttpServletRequest request, User user) {
+    public void update(UserProfileParamForm user) {
         if (user.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
-        userMapper.update(user);
+        userMapper.update(new User(user));
 
         // 这方法也太笨了，什么时候修一下
         User currentUser = SecurityUtil.getCurrentUserNotNull();
@@ -139,31 +141,39 @@ public class UserServiceImpl implements UserService {
             currentUser.setNote(user.getNote());
         }
         if (user.getIcon() != null) {
-            currentUser.setIcon(user.getNote());
+            currentUser.setIcon(user.getIcon());
         }
     }
 
     @Override
-    public void updateEmail(HttpServletRequest request, String oldEmail, String newEmail) {
-        if (oldEmail.equals(""))
-            oldEmail = null;
-        if (oldEmail == null || !oldEmail.equals(newEmail)) {
-            User user = SecurityUtil.getCurrentUserNotNull();
-            if (oldEmail == null ||  user.getEmail().equals("") || oldEmail.equals(user.getEmail())) {
-                user.setEmail(newEmail);
-                userMapper.update(user); // 似乎有数据库更新失败，但session修改成功的风险
-            }
-        }
-    }
-
-    @Override
-    public boolean updatePwd(HttpServletRequest request, String oldPwd, String newPwd) {
+    public boolean updateEmail(String oldEmail, String newEmail) {
+        if (oldEmail == null || newEmail == null || oldEmail.equals(newEmail))
+            return false;
         User user = SecurityUtil.getCurrentUserNotNull();
-        if ((oldPwd != null && !oldPwd.equals(newPwd)) && passwordEncoder.matches(oldPwd, user.getPassword())) {
-            user.setPassword(passwordEncoder.encode(newPwd));
-            userMapper.update(user);
-            return true;
+        if (!oldEmail.equals(user.getEmail())) {
+            return false;
         }
-        return false;
+        if (!Pattern.matches("^[\\w\\u4e00-\\u9fa5]+@\\w+\\.\\w+", newEmail)) {
+            return false;
+        }
+        user.setEmail(newEmail);
+        userMapper.update(user); // 似乎有数据库更新失败，但session修改成功的风险
+        return true;
+    }
+
+    @Override
+    public boolean updatePwd(String oldPwd, String newPwd) {
+        if (oldPwd == null || newPwd == null || oldPwd.equals(newPwd))
+            return false;
+        User user = SecurityUtil.getCurrentUserNotNull();
+        if (!passwordEncoder.matches(oldPwd, user.getPassword())) {
+            return false;
+        }
+        if (!Pattern.matches("^[\\x21-\\x7e]{6,16}$", newPwd)) {
+            return false;
+        }
+        user.setPassword(passwordEncoder.encode(newPwd));
+        userMapper.update(user);
+        return true;
     }
 }

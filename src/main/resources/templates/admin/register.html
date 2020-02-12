@@ -38,7 +38,7 @@
         </div>
         <input class="form-control col-4" id="email" name="email"
                placeholder="邮箱" required th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
-               th:value="*{email}" type="email">
+               pattern="^[\w\u4e00-\u9fa5]+@\w+\.\w+$" th:value="*{email}" type="text">
         <div class="invalid-feedback col align-self-center text-left">邮箱格式不合法</div>
     </div>
     <div class="row mb-2">

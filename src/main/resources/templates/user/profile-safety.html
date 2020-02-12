@@ -12,7 +12,6 @@
 <div th:replace="nav :: nav-top"></div>
 <div th:replace="breadcrumb :: comic"></div>
 <div class="container-fluid">
-<!--TODO: 缺少前后端验证，可以将login的部分功能移植过来-->
     <div class="row justify-content-center">
         <div th:replace="sidebar :: profile"></div>
         <div class="profile mt-lg-1 col-6" th:with="user=${#session.getAttribute('SPRING_SECURITY_CONTEXT').Authentication.Principal}">
@@ -26,32 +25,34 @@
                        data-toggle="collapse" href="#" th:text="${user.email} ? '修改' : '设置'"></a>
                 </div>
                 <div class="collapse pt-2" id="collapseEmail">
-                    <div class="card card-body">
-                        <div class="row">
+                    <form class="card card-body" id="email-form" novalidate>
+                        <div class="row mb-2">
                             <div class="col-2 text-right align-self-center">
-                                <label for="oldEmail">旧邮箱: </label>
+                                <label for="old-email">旧邮箱: </label>
                             </div>
-                            <div class="col-5 mb-2">
-                                <input class="form-control" id="oldEmail" name="oldEmail"
-                                       placeholder="输入旧邮箱" type="email">
+                            <input class="form-control col-4" id="old-email"
+                                   pattern="^[\w\u4e00-\u9fa5]+@\w+\.\w+$" placeholder="输入旧邮箱" required type="text">
+                            <div class="invalid-feedback col align-self-center text-left">
+                                邮箱格式错误
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row mb-2">
                             <div class="col-2 text-right align-self-center">
-                                <label for="newEmail">新邮箱: </label>
+                                <label for="new-email">新邮箱: </label>
                             </div>
-                            <div class="col-5 mb-2">
-                                <input class="form-control" id="newEmail" name="newEmail"
-                                       placeholder="输入新邮箱" type="email">
+                            <input class="form-control col-4" id="new-email"
+                                   pattern="^[\w\u4e00-\u9fa5]+@\w+\.\w+$" placeholder="输入新邮箱" required type="text">
+                            <div class="invalid-feedback col align-self-center text-left">
+                                邮箱格式错误
                             </div>
                         </div>
                         <div class="row pt-2">
                             <div class="col-2"></div>
-                            <div class="col">
-                                <button class="btn btn-danger btn-email" th:text="${user.email} ? '修改邮箱' : '设置邮箱'"></button>
+                            <input class="btn btn-danger col-2" id="email-submit" th:value="${user.email} ? '修改邮箱' : '设置邮箱'" type="submit">
+                            <div class="invalid-feedback col align-self-center text-left" id="email-feedback">
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
 
@@ -61,41 +62,44 @@
                         <a aria-expanded="false" data-target="#collapsePassword" data-toggle="collapse" href="#">修改密码</a>
                     </div>
                     <div class="collapse pt-2" id="collapsePassword">
-                        <div class="card card-body">
-                            <div class="row">
+                        <form class="card card-body" id="password-form" novalidate>
+                            <div class="row mb-2">
                                 <div class="col-2 text-right align-self-center">
-                                    <label for="oldPassword">旧密码: </label>
+                                    <label for="old-password">旧密码: </label>
                                 </div>
-                                <div class="col-5 mb-2">
-                                    <input class="form-control" id="oldPassword" name="oldPassword"
-                                           placeholder="输入旧密码" type="password">
+                                <input class="form-control col-4" id="old-password"
+                                       pattern="^[\x21-\x7e]{6,16}$" placeholder="输入旧密码" required type="password">
+                                <div class="invalid-feedback col align-self-center text-left">
+                                    密码格式错误
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row mb-2">
                                 <div class="col-2 text-right align-self-center">
-                                    <label for="newPassword">新密码: </label>
+                                    <label for="new-password">新密码: </label>
                                 </div>
-                                <div class="col-5 mb-2">
-                                    <input class="form-control" id="newPassword" name="newPassword"
-                                           placeholder="输入新密码" type="password">
+                                <input class="form-control col-4" id="new-password"
+                                       pattern="^[\x21-\x7e]{6,16}$" placeholder="输入新密码" required type="password">
+                                <div class="invalid-feedback col align-self-center text-left">
+                                    密码格式错误
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row mb-2">
                                 <div class="col-2 text-right align-self-center">
-                                    <label for="repeatPassword">重复密码: </label>
+                                    <label for="repeat-password">重复密码: </label>
                                 </div>
-                                <div class="col-5 mb-2">
-                                    <input class="form-control" id="repeatPassword" name="repeatPassword"
-                                           placeholder="重复新密码" type="password">
+                                <input class="form-control col-4" id="repeat-password"
+                                       pattern="^[\x21-\x7e]{6,16}$" placeholder="重复新密码" required type="password">
+                                <div class="invalid-feedback col align-self-center text-left">
+                                    密码格式错误
                                 </div>
                             </div>
                             <div class="row pt-2">
                                 <div class="col-2"></div>
-                                <div class="col">
-                                    <button class="btn btn-danger btn-password">修改密码</button>
+                                <input class="btn btn-danger col-2" id="password-submit" type="submit" value="修改密码" />
+                                <div class="invalid-feedback col align-self-center text-left" id="password-feedback">
                                 </div>
                             </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -107,5 +111,6 @@
 <script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"></script>
 <script src="/scripts/main.js"></script>
+<script src="/scripts/profile.js"></script>
 </body>
 </html>

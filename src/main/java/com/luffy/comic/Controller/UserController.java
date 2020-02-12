@@ -3,6 +3,7 @@ package com.luffy.comic.controller;
 import com.github.pagehelper.PageInfo;
 import com.luffy.comic.common.api.CommonResult;
 import com.luffy.comic.common.utils.SecurityUtil;
+import com.luffy.comic.dto.UserProfileParamForm;
 import com.luffy.comic.model.Comic;
 import com.luffy.comic.model.Record;
 import com.luffy.comic.model.User;
@@ -16,9 +17,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @Api(tags = "UserController")
 @Controller
@@ -95,30 +97,34 @@ public class UserController {
     @ApiOperation("用户设置修改")
     @PostMapping("/profile/update")
     @ResponseBody
-    public CommonResult updateProfile(HttpServletRequest request, @RequestBody User user) {
-        user.setId(SecurityUtil.getCurrentUserNotNull().getId());
-        userService.update(request, user);
-        return CommonResult.success("修改信息成功");
+    public CommonResult updateProfile(@Valid @RequestBody UserProfileParamForm user, BindingResult result) {
+        if (!result.hasErrors()) {
+            user.setId(SecurityUtil.getCurrentUserNotNull().getId());
+            logger.info(user.toString());
+            return CommonResult.success(null, "修改信息成功");
+        }
+        return CommonResult.failed("信息格式错误");
     }
 
     @ApiOperation("邮箱修改")
     @PostMapping("/profile/updateEmail")
     @ResponseBody
-    public CommonResult updateEmail(HttpServletRequest request, @RequestParam("oldEmail") String oldEmail,
+    public CommonResult updateEmail(@RequestParam("oldEmail") String oldEmail,
                                     @RequestParam("newEmail") String newEmail) {
-        userService.updateEmail(request, oldEmail, newEmail);
-        return CommonResult.success("修改邮箱成功");
+        if (userService.updateEmail(oldEmail, newEmail)) {
+            return CommonResult.success(null, "修改邮箱成功");
+        }
+        return CommonResult.failed("邮箱不匹配");
     }
 
     @ApiOperation("密码修改")
     @PostMapping("/profile/updatePwd")
     @ResponseBody
-    public CommonResult updatePwd(HttpServletRequest request, @RequestParam("oldPwd") String oldPwd,
-                                    @RequestParam("newPwd") String newPwd) {
-        if (userService.updatePwd(request, oldPwd, newPwd)) {
-            return CommonResult.success("修改密码成功");
+    public CommonResult updatePwd(@RequestParam("oldPwd") String oldPwd,
+                                  @RequestParam("newPwd") String newPwd) {
+        if (userService.updatePwd(oldPwd, newPwd)) {
+            return CommonResult.success(null, "修改密码成功");
         }
         return CommonResult.failed("密码修改失败");
-
     }
 }

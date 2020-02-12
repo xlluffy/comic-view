@@ -81,13 +81,15 @@ $(function () {
         appendPage: function(id) {
             let page = $("<div class='page'>");
             let img;
-            if (isMobile()) {
+            /*if (isMobile()) {
                 img = $("<img src='/{0}/{1}/{2}{3}' alt='/{0}/{1}/{2}{3}' class='page-img border border-light rounded mt-2 mb-2' /> "
                     .format(chapter.comic.title, chapter.title, id.format(3), chapter.suffix));
             } else {
                 img = $("<img src='/tmp-cover.png' alt='/{0}/{1}/{2}{3}' class='page-img border border-light rounded mt-2 mb-2' /> "
                     .format(chapter.comic.title, chapter.title, id.format(3), chapter.suffix));
-            }
+            }*/
+            img = $("<img src='/{0}/{1}/{2}{3}' alt='/{0}/{1}/{2}{3}' class='page-img border border-light rounded mt-2 mb-2' /> "
+                .format(chapter.comic.title, chapter.title, id.format(3), chapter.suffix));
             let footer = $("<span class='footer text-secondary'>{0}/{1}</span>".format(id, chapter.pages));
             page.append(img).append("<br />").append(footer);
             container.append(page);
