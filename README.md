@@ -39,7 +39,7 @@
 |Jquery                |JavaScript库       |
 
 #### 待实现
-+ 新建`category`表以及`comic-category-relation`表，支持漫画按`category`分类
++ ~~新建`category`表以及`comic-category-relation`表，支持漫画按`category`分类~~ √
 + 评论功能
 + 实现众多小功能ing...
 + 界面大幅优化...
