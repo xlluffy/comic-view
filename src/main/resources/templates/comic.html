@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:th="http://www.thymeleaf.org"
 >
 <head>
     <meta charset="utf-8">
@@ -7,14 +8,67 @@
     <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" rel="stylesheet">
     <link href="/stylesheets/main.css" rel="stylesheet" type="text/css"/>
+    <link href="/stylesheets/comic.css" rel="stylesheet" type="text/css"/>
 
     <title th:text="${comic.title}"></title>
 </head>
 <body>
 <div th:replace="nav :: nav-top"></div>
-<div th:replace="breadcrumb :: comic"></div>
 <div class="container-fluid">
-    <div class="row">
+    <div class="card" id="comic-summary">
+        <div class="row no-gutters mb-3">
+            <div class="col-2">
+                <img class="card-img border" th:alt="|/${comic.title}/cover.jpg|" th:src="|/${comic.title}/cover.jpg|">
+            </div>
+            <div class="col-8 ml-4">
+                <div class="card-body pt-1">
+                    <h2 class="card-title" th:text="${comic.title}"></h2>
+                    <div class="pb-2 text-secondary" th:text="${comic.author} + ', ' + ${#dates.format(comic.createTime, 'yyyy/MM/dd')}"></div>
+                    <div class="text-muted pb-2">
+                        <img alt="/images/icons/tag.svg" src="/images/icons/tag.svg" style="width: 16px; height: 16px">
+                        <span>
+                            <a th:each="category: ${comic.categories}" th:href="@{'/category/' + ${category.id}}"
+                               th:text="${category.name} + ' '"></a>
+                        </span>
+                    </div>
+                    <div class="text-muted pb-5">
+                        <img alt="/images/icons/calendar.svg" src="/images/icons/calendar.svg" style="width: 16px; height: 16px">
+                        <span th:text="'最近更新: ' + ${#dates.format(comic.lastUpdate, 'yyyy/MM/dd')}"></span>
+                    </div>
+                    <div class="mt-5">
+                        <a class="btn btn-outline-primary mr-3" th:href="@{/chapter/${last_record.chapter.id}(page=${last_record.chapter.pages})}" th:if="${last_record}">继续阅读</a>
+                        <a class="btn btn-outline-primary mr-3" th:href="@{'/chapter/'}" th:if="not ${last_record}">开始阅读</a>
+                        <div sec:authorize="!isAnonymous()" th:replace="favourite-icon :: favourite(${comic.id}, ${favourite})"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h3>章节列表</h3>
+        <ul class="list-inline" th:with="path=${#request.getRequestURI()}">
+            <li class="list-inline-item" th:classappend="${now == pages.pageNum} ? 'active'" th:each="now : ${pages.navigatepageNums}">
+                <a th:href="${path}+'?pageNum='+${now}+'&pageSize='+${pages.pageSize}" th:text="50*(${now} - 1) + 1 + ' - ' + 50*${now}">
+                </a>
+            </li>
+        </ul>
+        <div id="chapter-list">
+            <div class="chapter-line " th:each="line : ${#numbers.sequence(0, pages.size / 5 - 1)}">
+                <a class="btn btn-outline-info"
+                   th:each="row : ${#numbers.sequence(0, 4)}" th:text="${line * 5 + row + 1} + ' ' + ${chapter.title}"
+                   th:with="chapter=${pages.list[line * 5 + row]}"></a>
+            </div>
+            <div class="chapter-line">
+                <a class="btn btn-outline-info"
+                   th:each="index : ${#numbers.sequence(5*(pages.size / 5), pages.size - 1)}"
+                   th:text="${index + 1} + ' ' + ${chapter.title}"
+                   th:with="chapter=${pages.list[index]}"></a>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <div class="row" hidden="">
         <div th:replace="sidebar :: comic"></div>
 
         <div class="col-md-10">

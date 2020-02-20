@@ -35,6 +35,11 @@ public class ComicServiceImpl implements ComicService {
     }
 
     @Override
+    public Comic findByIdWithCategories(Integer id) {
+        return comicMapper.findByIdWithCategories(id);
+    }
+
+    @Override
     public Comic findByTitle(String title) {
         return comicMapper.findByTitle(title);
     }
@@ -53,10 +58,11 @@ public class ComicServiceImpl implements ComicService {
     public PageInfo<Comic> findByPage(String orderBy, boolean asc, Integer pageNum, Integer pageSize) {
         String style = asc ? "asc" : "desc";
         PageHelper.startPage(pageNum, pageSize);
-        if ("title".equals(orderBy)) {
-            return new PageInfo<>(comicMapper.findAll("title", style));
-        } else {
-            return new PageInfo<>(comicMapper.findAll("id", style));
+        switch (orderBy) {
+            case "title": return new PageInfo<>(comicMapper.findAll("title", style));
+            case "lastUpdate": return new PageInfo<>(comicMapper.findAll("last_update", style));
+            default:
+                return new PageInfo<>(comicMapper.findAll("id", style));
         }
     }
 
@@ -75,6 +81,12 @@ public class ComicServiceImpl implements ComicService {
     public PageInfo<Comic> findByAuthorByPage(String author, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         return new PageInfo<>(comicMapper.findByAuthor(author));
+    }
+
+    @Override
+    public PageInfo<Comic> findByCategoryIdByPage(Integer categoryId, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        return new PageInfo<>(comicMapper.findByCategoryId(categoryId));
     }
 
     @Override

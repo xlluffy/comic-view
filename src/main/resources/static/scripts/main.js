@@ -461,9 +461,9 @@ $(document).ready(function () {
 
     });
 
-    /*if (!isMobile()) {
-        $('.sidebar img, .card>a img, .record img, .page-img').attr('src', '/tmp-cover.png');
-    }*/
+    if (!isMobile()) {
+        // $('.sidebar img, .card img, .record img, .page-img').attr('src', '/tmp-cover.png');
+    }
 
     $('.delete-comic').bind('click', deleteComicEvent);
     $('.add-chapter, .add-comic').click(function(e) {

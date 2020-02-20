@@ -12,6 +12,17 @@ public interface ComicMapper {
     @Select("select * from comic where id = #{id}")
     Comic findById(Integer id);
 
+    @Select("select * from comic where id = #{id}")
+    @Results(id = "comicMapperWithTags", value = {
+            @Result(property = "id", column = "id"),
+            @Result(property = "categories", column = "id",
+            many = @Many(select = "com.luffy.comic.mapper.CategoryMapper.findByComicId"))
+    })
+    Comic findByIdWithCategories(Integer id);
+
+    @Select("select comic.* from comic, comic_category_relation ct where ct.category_id = #{categoryId} and ct.comic_id = comic.id")
+    List<Comic> findByCategoryId(Integer categoryId);
+
     @Select("select * from comic where title = #{title}")
     Comic findByTitle(String title);
 
@@ -39,8 +50,6 @@ public interface ComicMapper {
     @Select("select count(*) from comic")
     int count();
 
-    @Insert("insert into comic(title, full_title, author) values (#{title}, #{fullTitle}, #{author})")
-    @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Comic comic);
 
     @Delete("delete from comic where id = #{id}")

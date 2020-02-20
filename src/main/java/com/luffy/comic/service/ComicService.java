@@ -10,6 +10,8 @@ import java.util.Map;
 public interface ComicService {
     Comic findById(Integer id);
 
+    Comic findByIdWithCategories(Integer id);
+
     Comic findByTitle(String title);
 
     List<Comic> findAll();
@@ -21,6 +23,8 @@ public interface ComicService {
     PageInfo<Comic> findByUserByPage(Integer userId, String orderBy, boolean asc, Integer pageNum, Integer pageSize);
 
     PageInfo<Comic> findByAuthorByPage(String author, Integer pageNum, Integer pageSize);
+
+    PageInfo<Comic> findByCategoryIdByPage(Integer categoryId, Integer pageNum, Integer pageSize);
 
     Map<String, Integer> findAddableLocalComics();
 

@@ -59,17 +59,18 @@ public class ComicController {
     @GetMapping("/comic/{id}")
 //    @PreAuthorize("hasAuthority('comic:comic:read')")
     public String getComic(@PathVariable int id,
-                           @RequestParam(name = "asc", defaultValue = "false") boolean asc,
+                           @RequestParam(name = "asc", defaultValue = "true") boolean asc,
                            @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
-                           @RequestParam(name = "pageSize", defaultValue = "20") int pageSize,
+                           @RequestParam(name = "pageSize", defaultValue = "50") int pageSize,
                            Model model) {
-        Comic comic = comicService.findById(id);
-        if (comic == null)
+        Comic comic = comicService.findByIdWithCategories(id);
+        if (comic == null) {
             return "error/404";
+        }
         model.addAttribute("comic", comic);
-
         PageInfo<Chapter> pages = chapterService.findByComicIdByPage(id, asc, pageNum, pageSize);
         model.addAttribute("pages", pages);
+//        pages.getS()
 
         User user = SecurityUtil.getCurrentUser();
         if (user != null) {

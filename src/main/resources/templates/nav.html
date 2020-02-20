@@ -11,10 +11,21 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="nav-top" th:fragment="nav-top">
-		<a class="navbar-brand" href="/">
-			<img alt="" height="30" src="/favicon.ico" width="30">
+    <nav class="navbar navbar-expand-lg navbar-dark bd-navbar bg-dark" id="nav-top" th:fragment="nav-top">
+		<a class="navbar-brand mr-2" href="/">
+			<img alt="/favicon.ico" class="d-inline-block align-top" height="30" src="/favicon.ico" width="30">
 		</a>
+
+		<div class="navbar-nav-scroll ml-4">
+			<ul class="navbar-nav  bd-navbar-nav flex-row">
+				<li class="nav-item">
+					<a class="nav-link" href="/category">分类</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/index?orderBy=lastUpdate&asc=false">最近更新</a>
+				</li>
+			</ul>
+		</div>
 
 		<div class="collapse navbar-collapse justify-content-end">
 			<ul class="navbar-nav account">
@@ -43,13 +54,28 @@
 						管理员
 					</a>
 					<div aria-labelledby="navbarDropdownMenuLink" class="dropdown-menu">
-						<a class="dropdown-item" href="/admin/">漫画管理</a>
+						<a class="dropdown-item" href="/admin/comic/index">漫画管理</a>
 						<a class="dropdown-item" href="/admin/account/index">账号管理</a>
 					</div>
 				</li>
 			</ul>
 		</div>
     </nav>
+
+	<nav id="nav-category" th:fragment="nav-category">
+		<ul class="list-inline">
+			<li class="list-inline-item text-muted">分类</li>
+			<li class="list-inline-item" th:each="category : ${categories}">
+				<a th:href="@{/category(categoryId=${category.id})}" th:text="${category.name}"></a>
+			</li>
+		</ul>
+		<!--<ul class="list-inline">
+			<li class="list-inline-item text-muted">排序</li>
+			<li class="list-inline-item">默认</li>
+			<li class="list-inline-item">漫画名</li>
+			<li class="list-inline-item">更新时间</li>
+		</ul>-->
+	</nav>
 
 	<nav aria-label="Page navigation example" class="mt-3" id="nav-pag" th:fragment="nav-pag">
 		<ul class="pagination justify-content-center" th:with="path=${#request.getRequestURI()}">

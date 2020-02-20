@@ -10,12 +10,8 @@
 
 ### 搭建步骤
 1. 克隆`comic-view`项目到本地，并导入IDEA中部署。
-2. 导入`sql.sql`表到MySQL数据库。
-3. 在`main\resources`目录下新建`secret.properties`文件，并输入MySQL账号和密码。
-```$xslt
-database.username = 你的账号
-database.password = 你的密码
-```
+2. 导入`sql.sql`到MySQL数据库。
+3. 在`application.properties`文件中输入MySQL账号和密码。
 > 启用`ElasticSearch`搜索
 4. 下载并安装
    [Elasticsearch](https://www.elastic.co/cn/downloads/past-releases#elasticsearch)
@@ -43,7 +39,7 @@ database.password = 你的密码
 |Jquery                |JavaScript库       |
 
 #### 待实现
-+ 新建`tag`表以及`comic-tag-relation`表，支持漫画按`tag`分类
++ 新建`category`表以及`comic-category-relation`表，支持漫画按`category`分类
 + 评论功能
 + 实现众多小功能ing...
 + 界面大幅优化...

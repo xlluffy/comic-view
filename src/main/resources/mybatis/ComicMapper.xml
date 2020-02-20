@@ -5,6 +5,23 @@
 <mapper namespace="com.luffy.comic.mapper.ComicMapper">
     <cache/>
 
+    <sql id="insertFrag">
+        (title, full_title, author, create_time)
+    </sql>
+    <sql id="insertValue">
+        (#{title}, #{fullTitle}, #{author},
+            <if test="createTime != null">#{createTime}</if>
+        <if test="createTime == null">now()</if>
+            )
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into comic
+        <include refid="insertFrag" />
+        values
+        <include refid="insertValue" />
+    </insert>
+
     <update id="update" useGeneratedKeys="true" keyProperty="id">
         update comic
         <set>
@@ -25,16 +42,20 @@
     </update>
 
     <insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id">
-        insert into comic (title, full_title, author)
-        values (#{title}, #{fullTitle}, #{author})
+        insert into comic
+        <include refid="insertFrag" />
+        values
+        <include refid="insertValue" />
         on duplicate key update full_title = #{fullTitle},
                                 author     = #{author}
     </insert>
 
     <insert id="insertOrUpdateBatch" useGeneratedKeys="true" keyProperty="id">
-        insert into comic(title, full_title, author) values
+        insert into comic
+        <include refid="insertFrag" />
+        values
         <foreach collection="list" item="comic" index="index" separator=",">
-            (#{comic.title}, #{comic.fullTitle}, #{comic.author})
+            <include refid="insertValue" />
         </foreach>
         on duplicate key update full_title = values(full_title), author = values(author)
     </insert>

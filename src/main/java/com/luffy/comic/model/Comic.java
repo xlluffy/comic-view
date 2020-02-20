@@ -1,6 +1,8 @@
 package com.luffy.comic.model;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 
 public class Comic implements Serializable {
@@ -9,6 +11,9 @@ public class Comic implements Serializable {
     private String title;
     private String fullTitle;
     private String author;
+    private Date createTime;
+    private Date lastUpdate;
+    private List<Category> categories;
 
     public Comic() {
     }
@@ -52,13 +57,40 @@ public class Comic implements Serializable {
         this.author = author;
     }
 
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
+    }
+
     @Override
     public String toString() {
         return "Comic{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", full_title='" + fullTitle + '\'' +
+                ", fullTitle='" + fullTitle + '\'' +
                 ", author='" + author + '\'' +
+                ", createTime=" + createTime +
+                ", lastUpdate=" + lastUpdate +
+                ", categories=" + categories +
                 '}';
     }
 }

@@ -1,3 +1,26 @@
-.card {
-    height: 370px
+body {
+    background-color: #fafafa;
 }
+
+#comic-summary {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 30px;
+    padding-left: 30px;
+}
+
+.card {
+    background-color: #ffffff;
+}
+
+.chapter-line {
+    margin-bottom: 16px;
+}
+
+.chapter-line a {
+    width: 200px;
+    height: 48px;
+    margin-right: 16px;
+    overflow: visible;
+}
+

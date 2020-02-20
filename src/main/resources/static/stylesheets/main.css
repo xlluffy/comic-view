@@ -77,3 +77,25 @@
 .card-img-top {
     height: 283px;
 }
+
+.card-img {
+    width: 230px;
+    height: 283px;
+}
+
+#nav-top {
+    border-bottom: 1px solid #dee2e6!important;
+    box-shadow: 2px 2px 4px #aaaaaa;
+    margin-bottom: 30px;
+    padding-left: 75px;
+    padding-right: 75px;
+}
+
+#nav-category {
+    margin: 0 200px 30px 200px;
+}
+
+#nav-category a {
+    text-decoration: none;
+    color: black;
+}
