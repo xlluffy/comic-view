@@ -17,6 +17,8 @@ public interface ChapterService {
 
     Set<String> findAddableLocalChapter(Integer comicId);
 
+    Chapter findFirstByComicId(Integer comicId);
+
     List<String> findAllTitles();
 
     Integer findPrevIdById(Integer id);

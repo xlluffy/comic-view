@@ -10,7 +10,6 @@
         <set>
             <if test="text != null">text = #{text} ,</if>
             <if test="user != null">user_id = #{user.id},</if>
-            <if test="replyUser != null">reply_user_id = #{replyUser.id},</if>
             <if test="comic != null">comic_id = #{comic.id},</if>
         </set>
         where id = #{id}

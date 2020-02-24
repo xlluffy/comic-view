@@ -3,24 +3,100 @@ body {
 }
 
 #comic-summary {
+    /*background-color: #ffffff;*/
     max-width: 1200px;
     margin: 0 auto;
     padding-top: 30px;
     padding-left: 30px;
+    /*border: 1px solid #dee2e6!important;*/
 }
 
-.card {
-    background-color: #ffffff;
+.muted-link {
+    color: #6c757d!important;
 }
 
-.chapter-line {
+.list-inline-item {
+    color: black;
+    font-size: 12px;
+}
+
+.active {
+    color: #007bff;
+    font-weight: 700;
+}
+
+.list-inline-item {
+    cursor: pointer;
+}
+
+.disabled {
+    cursor: default;
+}
+
+.chapter-line{
+    display: flex;
     margin-bottom: 16px;
+    flex-wrap: nowrap;
 }
 
 .chapter-line a {
+    /*display: block;*/
     width: 200px;
     height: 48px;
     margin-right: 16px;
-    overflow: visible;
+    line-height: 34px;
 }
 
+.comment-area, .comment, .reply {
+    max-width: 900px;
+    display: flex;
+    padding-top: .5rem!important;
+    margin-bottom: 1.5rem!important;
+}
+
+.reply {
+    margin-bottom: .5rem!important;
+}
+
+.reply-info {
+    font-size: 14px;
+}
+
+.user-face img{
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+}
+
+.user-face-reply img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+.username {
+    color: #6d757a;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 18px;
+    text-decoration: none;
+}
+
+.comment-text {
+    width: 700px;
+    resize: none;
+}
+
+.btn-comment, .btn-reply {
+    width: 60px;
+    height: 40px;
+}
+
+.btn-reply-wrap {
+    cursor: pointer;
+}
+
+.btn-reply-wrap:hover {
+    font-weight: 700;
+    text-decoration: underline;
+}

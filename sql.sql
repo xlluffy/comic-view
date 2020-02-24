@@ -4,11 +4,37 @@ use comic;
 -- Table structure for comic
 -- --------------------------
 create table if not exists comic(
-    id         int auto_increment primary key,
-    title      varchar(20)                  null comment '漫画名',
-    full_title varchar(50)                  null,
-    author     varchar(20) default 'No one' null comment '作者',
+    id          int auto_increment primary key,
+    title       varchar(20)                           null,
+    full_title  varchar(50)                           null,
+    author      varchar(20) default 'No one'          null,
+    create_time date                                  null,
+    last_update timestamp   default CURRENT_TIMESTAMP null,
     unique (title)
+);
+
+-- --------------------------
+-- Table structure for category
+-- --------------------------
+create table if not exists category(
+     id int primary key auto_increment,
+     name varchar(20) default 'untitled',
+     alias varchar(20) default null
+);
+
+insert into category(name) values ('后宫'), ('热血'), ('冒险'), ('搞笑'), ('校园'), ('日常'),
+                                  ('治愈'), ('运动'), ('少女'), ('青年'), ('百合'), ('恋爱');
+
+-- --------------------------
+-- Table structure for comic_tag_relation
+-- --------------------------
+create table if not exists comic_category_relation(
+    id int primary key auto_increment,
+    comic_id int,
+    category_id int,
+    foreign key (comic_id) references comic(id),
+    foreign key (category_id) references category(id),
+    unique (comic_id, category_id)
 );
 
 -- --------------------------
@@ -23,6 +49,22 @@ create table if not exists chapter(
     foreign key (comic_id) references comic (id) on delete cascade
 );
 
+# mysql不支持语句级触发器，真是悲惨...
+delimiter $$
+create trigger update_comic
+    after update on chapter for each row
+begin
+    update comic set last_update = now() where id = new.comic_id;
+end $$
+delimiter ;
+delimiter $$
+create trigger update_comic_insert
+    after insert on chapter for each row
+begin
+    update comic set last_update = now() where id = new.comic_id;
+end $$
+delimiter ;
+
 -- --------------------------
 -- Table structure for user
 -- --------------------------
@@ -32,7 +74,7 @@ create table if not exists user(
     password    varchar(64)                         not null comment '密码',
     email       varchar(100)                        null comment '邮箱',
     nick_name   varchar(200)                        null comment '昵称',
-    icon        varchar(500)                        null comment '头像',
+    icon        varchar(500)  default '/static/images/face/default.jpg' comment '头像',
     note        varchar(500)                        null comment '备注信息',
     create_time timestamp default CURRENT_TIMESTAMP null comment '创建时间',
     login_time  datetime                            null comment '登陆时间',
@@ -40,7 +82,6 @@ create table if not exists user(
     unique (email),
     unique (username)
 );
-# 密码均为123456
 insert into user(username, password, email, nick_name) values
                 ('luffy', '$2a$10$rMhxctqzDUaKyoOglIVqR.P/QKPTQ4uPhZQpZ.fVFMYuPdy8q2aF6', 'god@mail.com', 'monkey'),
                 ('admin', '$2a$10$E5Exa0M3MRlEBp/bsd5WQOBDHavD7KaQ4xb6oTXdcbPEEjwjwogsW', 'youremail@mail.com', 'admin');
@@ -133,6 +174,34 @@ create table if not exists record(
     foreign key (comic_id) references comic (id),
     foreign key (chapter_id) references chapter (id) on delete cascade,
     foreign key (user_id) references user (id)
+);
+
+-- --------------------------
+-- Table structure for comment
+-- --------------------------
+create table if not exists comment (
+   id integer primary key auto_increment,
+   text varchar(500),
+   user_id int not null ,
+   comic_id int not null ,
+   create_time timestamp default current_timestamp,
+   foreign key (user_id) references user(id),
+   foreign key (comic_id) references comic(id)
+);
+
+-- --------------------------
+-- Table structure for comment_reply
+-- --------------------------
+create table if not exists comment_reply (
+     id integer primary key auto_increment,
+     text varchar(500),
+     user_id int not null ,
+     comment_id int not null comment '评论id',
+     reply_id int default null comment '回复的回复id...',
+     create_time timestamp default current_timestamp,
+     foreign key (user_id) references user(id),
+     foreign key (comment_id) references comment(id),
+     foreign key (reply_id) references comment_reply(id)
 );
 
 -- --------------------------

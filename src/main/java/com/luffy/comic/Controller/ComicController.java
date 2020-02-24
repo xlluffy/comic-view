@@ -3,13 +3,8 @@ package com.luffy.comic.controller;
 import com.github.pagehelper.PageInfo;
 import com.luffy.comic.common.api.CommonResult;
 import com.luffy.comic.common.utils.SecurityUtil;
-import com.luffy.comic.model.Chapter;
-import com.luffy.comic.model.Comic;
-import com.luffy.comic.model.Record;
-import com.luffy.comic.model.User;
-import com.luffy.comic.service.ChapterService;
-import com.luffy.comic.service.ComicService;
-import com.luffy.comic.service.RecordService;
+import com.luffy.comic.model.*;
+import com.luffy.comic.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.logging.Log;
@@ -31,11 +26,17 @@ public class ComicController {
     private ComicService comicService;
     private ChapterService chapterService;
     private RecordService recordService;
+    private CommentService commentService;
+    private CommentReplyService commentReplyService;
 
-    public ComicController(ComicService comicService, ChapterService chapterService, RecordService recordService) {
+    public ComicController(ComicService comicService, ChapterService chapterService,
+                           RecordService recordService, CommentService commentService,
+                           CommentReplyService commentReplyService) {
         this.comicService = comicService;
         this.chapterService = chapterService;
         this.recordService = recordService;
+        this.commentService = commentService;
+        this.commentReplyService = commentReplyService;
     }
 
     @ApiOperation("获取漫画列表信息")
@@ -62,6 +63,8 @@ public class ComicController {
                            @RequestParam(name = "asc", defaultValue = "true") boolean asc,
                            @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
                            @RequestParam(name = "pageSize", defaultValue = "50") int pageSize,
+                           @RequestParam(name = "cPageNum", defaultValue = "1") int cPageNum,
+                           @RequestParam(name = "cPageSize", defaultValue = "20") int cPageSize,
                            Model model) {
         Comic comic = comicService.findByIdWithCategories(id);
         if (comic == null) {
@@ -70,17 +73,28 @@ public class ComicController {
         model.addAttribute("comic", comic);
         PageInfo<Chapter> pages = chapterService.findByComicIdByPage(id, asc, pageNum, pageSize);
         model.addAttribute("pages", pages);
-//        pages.getS()
+
+        PageInfo<Comment> comments = commentService.findByComicIdByPage(id, cPageNum, cPageSize);
+        HashMap<Integer, Object> repliesMap = new HashMap<>(comments.getSize());
+        for (Comment comment : comments.getList()) {
+            repliesMap.put(comment.getId(), commentReplyService.findByCommentIdByPage(comment.getId(), 1, 10));
+        }
+        model.addAttribute("comments", comments);
+        model.addAttribute("repliesMap", repliesMap);
 
         User user = SecurityUtil.getCurrentUser();
+        Record lastRecord = null;
         if (user != null) {
+            lastRecord = recordService.findLastOneByComicId(user.getId(), comic.getId());
             model.addAttribute("all_records", recordService.findAllByChapters(user.getId(), pages.getList()));
-            model.addAttribute("last_record", recordService.findLastOneByComicId(user.getId(), comic.getId()));
             model.addAttribute("favourite", comicService.hasFavouriteByUser(user.getId(), comic.getId()));
         } else {
             model.addAttribute("all_records", new HashMap<>());
-            model.addAttribute("last_record", null);
             model.addAttribute("favourite", null);
+        }
+        model.addAttribute("last_record", lastRecord);
+        if (lastRecord == null) {
+            model.addAttribute("first_chapter", chapterService.findFirstByComicId(id));
         }
         return "comic";
     }

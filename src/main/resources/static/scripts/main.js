@@ -450,7 +450,6 @@ $(document).ready(function () {
     // auth();
     pagination.init();
     textSummary();
-    // searchTooltip();
     hideSecret();
     // login();
     $('[data-toggle="tooltip"]').tooltip();
@@ -462,7 +461,7 @@ $(document).ready(function () {
     });
 
     if (!isMobile()) {
-        // $('.sidebar img, .card img, .record img, .page-img').attr('src', '/tmp-cover.png');
+        $('.sidebar img, .card img, .record img, .page-img').attr('src', '/tmp-cover.png');
     }
 
     $('.delete-comic').bind('click', deleteComicEvent);
@@ -518,7 +517,7 @@ $(document).ready(function () {
                 'role': $(this).find('option:selected').val()},
             function (msg) {
                 if (msg.code === 200) {
-                    console.log('添加权限成功');
+                    console.log('移除权限成功');
                     location.reload();
                 }
             })

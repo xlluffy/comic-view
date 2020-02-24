@@ -1,20 +1,19 @@
 package com.luffy.comic.model;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
-public class Comment implements Serializable {
-    private static final long serialVersionUID = 2120869894113612147L;
+public class CommentReply implements Serializable {
+    private static final long serialVersionUID = 2120849894113612147L;
     @Size(min = 1, max = 500)
     String text;
-    @NotNull
-    Comic comic;
-
     User user;
-    private int id;
+    Comment comment;
+    // 目前似乎用replyUser更好，先保留...
+    CommentReply reply;
     Date createTime;
+    private int id;
 
     public int getId() {
         return id;
@@ -40,12 +39,20 @@ public class Comment implements Serializable {
         this.user = user;
     }
 
-    public Comic getComic() {
-        return comic;
+    public Comment getComment() {
+        return comment;
     }
 
-    public void setComic(Comic comic) {
-        this.comic = comic;
+    public void setComment(Comment comment) {
+        this.comment = comment;
+    }
+
+    public CommentReply getReply() {
+        return reply;
+    }
+
+    public void setReply(CommentReply reply) {
+        this.reply = reply;
     }
 
     public Date getCreateTime() {
@@ -58,11 +65,12 @@ public class Comment implements Serializable {
 
     @Override
     public String toString() {
-        return "Comment{" +
+        return "CommentReply{" +
                 "id=" + id +
                 ", text='" + text + '\'' +
                 ", user=" + user +
-                ", comic=" + comic +
+                ", comment=" + comment +
+                ", reply=" + reply +
                 ", createTime=" + createTime +
                 '}';
     }

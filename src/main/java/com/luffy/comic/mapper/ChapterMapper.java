@@ -26,6 +26,9 @@ public interface ChapterMapper {
 //    @ResultMap("chapterMapper")
     List<Chapter> findByComicId(@Param("comicId") Integer comicId, @Param("style") String style);
 
+    @Select("select * from chapter where comic_id = #{comicId} order by id limit 1")
+    Chapter findFirstByComicId(Integer comicId);
+
     @Select("select title from chapter order by id")
     List<String> findAllTitles();
 

@@ -17,13 +17,17 @@
 <div class="container-fluid">
     <div class="card" id="comic-summary">
         <div class="row no-gutters mb-3">
-            <div class="col-2">
+            <div class="col-sm-3">
                 <img class="card-img border" th:alt="|/${comic.title}/cover.jpg|" th:src="|/${comic.title}/cover.jpg|">
             </div>
-            <div class="col-8 ml-4">
+            <div class="col-8">
                 <div class="card-body pt-1">
                     <h2 class="card-title" th:text="${comic.title}"></h2>
-                    <div class="pb-2 text-secondary" th:text="${comic.author} + ', ' + ${#dates.format(comic.createTime, 'yyyy/MM/dd')}"></div>
+                    <div class="pb-2 text-secondary">
+                        <a class="muted-link" target="_blank"
+                            th:href="@{/esComic/search(author=${comic.author})}" th:text="${comic.author}"></a>
+                        <span th:text="', ' + ${#dates.format(comic.createTime, 'yyyy/MM/dd')}"></span>
+                    </div>
                     <div class="text-muted pb-2">
                         <img alt="/images/icons/tag.svg" src="/images/icons/tag.svg" style="width: 16px; height: 16px">
                         <span>
@@ -36,37 +40,140 @@
                         <span th:text="'最近更新: ' + ${#dates.format(comic.lastUpdate, 'yyyy/MM/dd')}"></span>
                     </div>
                     <div class="mt-5">
-                        <a class="btn btn-outline-primary mr-3" th:href="@{/chapter/${last_record.chapter.id}(page=${last_record.chapter.pages})}" th:if="${last_record}">继续阅读</a>
-                        <a class="btn btn-outline-primary mr-3" th:href="@{'/chapter/'}" th:if="not ${last_record}">开始阅读</a>
+                        <a class="btn btn-outline-primary mr-3" target="_blank"
+                           th:href="@{'/chapter/' + ${last_record.chapter.id}(page=${last_record.page})}" th:if="${last_record}">继续阅读</a>
+                        <a class="btn btn-outline-primary mr-3" target="_blank"
+                           th:href="@{'/chapter/' + ${first_chapter.id}}" th:if="not ${last_record}">开始阅读</a>
                         <div sec:authorize="!isAnonymous()" th:replace="favourite-icon :: favourite(${comic.id}, ${favourite})"></div>
                     </div>
                 </div>
             </div>
         </div>
-        <h3>章节列表</h3>
-        <ul class="list-inline" th:with="path=${#request.getRequestURI()}">
-            <li class="list-inline-item" th:classappend="${now == pages.pageNum} ? 'active'" th:each="now : ${pages.navigatepageNums}">
-                <a th:href="${path}+'?pageNum='+${now}+'&pageSize='+${pages.pageSize}" th:text="50*(${now} - 1) + 1 + ' - ' + 50*${now}">
-                </a>
-            </li>
-        </ul>
-        <div id="chapter-list">
-            <div class="chapter-line " th:each="line : ${#numbers.sequence(0, pages.size / 5 - 1)}">
-                <a class="btn btn-outline-info"
-                   th:each="row : ${#numbers.sequence(0, 4)}" th:text="${line * 5 + row + 1} + ' ' + ${chapter.title}"
-                   th:with="chapter=${pages.list[line * 5 + row]}"></a>
-            </div>
-            <div class="chapter-line">
-                <a class="btn btn-outline-info"
-                   th:each="index : ${#numbers.sequence(5*(pages.size / 5), pages.size - 1)}"
-                   th:text="${index + 1} + ' ' + ${chapter.title}"
-                   th:with="chapter=${pages.list[index]}"></a>
+        <div class="mb-3 align-self-center" id="chapters-info">
+            <h3>章节列表</h3>
+            <ul class="list-inline" th:with="path=${#request.getRequestURI()}">
+                <li class="list-inline-item" th:classappend="${now == pages.pageNum} ? 'active'" th:each="now : ${pages.navigatepageNums}">
+                    <a th:href="${path}+'?pageNum='+${now}+'&pageSize='+${pages.pageSize}"
+                       th:text="${pages.pageSize}*(${now} - 1) + 1 + ' - ' + ${pages.pageSize}*${now}">
+                    </a>
+                </li>
+            </ul>
+            <div id="chapter-list">
+                <div class="chapter-line" th:each="line : ${#numbers.sequence(0, pages.size / 5 - 1)}">
+                    <a class="btn btn-outline-info text-truncate" data-placement="top"
+                       data-toggle="tooltip" target="_blank"
+                       th:each="row : ${#numbers.sequence(0, 4)}" th:href="@{'/chapter/' + ${chapter.id}}"
+                       th:text="${line * 5 + row + 1} + ' ' + ${chapter.title}" th:title="${line * 5 + row + 1} + ' ' + ${chapter.title}" th:with="chapter=${pages.list[line * 5 + row]}"></a>
+                </div>
+                <div class="chapter-line">
+                    <a class="btn btn-outline-info text-truncate" data-placement="top" data-toggle="tooltip"
+                       target="_blank"
+                       th:each="index : ${#numbers.sequence(5*(pages.size / 5), pages.size - 1)}"
+                       th:href="@{'/chapter/' + ${chapter.id}}" th:if="${5*(pages.size / 5) > pages.size}"
+                       th:text="${index + 1} + ' ' + ${chapter.title}" th:title="${index + 1} + ' ' + ${chapter.title}" th:with="chapter=${pages.list[index]}"></a>
+                </div>
             </div>
         </div>
+        <div>
+            <h3>评论</h3>
+            <th:block th:fragment="comment-comic">
+                <div class="comment-area">
+                    <div class="user-face pr-4" sec:authorize="!isAnonymous()"
+                         th:with="user=${#session.getAttribute('SPRING_SECURITY_CONTEXT').Authentication.Principal}">
+                        <img th:alt="${user.icon}" th:src="${user.icon}">
+                    </div>
+                    <textarea autocomplete="off" class="form-control comment-text mr-4" cols="8"
+                              id="comment" maxlength="500" placeholder="写下你的评论..." required rows="2"></textarea>
+                    <button class="btn btn-primary btn-comment align-self-center">评论</button>
+                </div>
+<!--                TODO: 处理匿名用户反馈-->
+                <div class="comment-area" sec:authorize="isAnonymous()">
+                </div>
+            </th:block>
+            <hr>
 
+            <h3>最新评论</h3>
+            <div class="comments">
+                <div class="comment pr-4 border-bottom" th:each="comment: ${comments.list}">
+                    <div class="user-face pr-4">
+                        <img th:alt="${comment.user.icon}" th:src="${comment.user.icon}">
+                    </div>
+                    <div class="comment-details">
+                        <div class="mb-2">
+                            <a class="username"
+                               th:href="@{'/user/' + ${comment.user.id} + '/favourite'}" th:text="${comment.user.username}"></a>
+                        </div>
+                        <div class="mb-1" th:text="${comment.text}"></div>
+                        <div class="text-muted reply-info">
+                            <span th:text="${#dates.format(comment.createTime, 'yyyy/MM/dd hh:mm')}"></span>
+                            <span class="ml-3 btn-reply-wrap" th:data="'{&quot;commentId&quot:' + ${comment.id} + '}'"
+                                  th:href="'#comment' + ${comment.id}">
+                                回复
+                            </span>
+                        </div>
+
+                        <div class="reply" th:each="reply : ${repliesMap[comment.id].list}">
+                            <div class="user-face-reply pr-2">
+                                <img th:alt="${reply.user.icon}" th:src="${reply.user.icon}">
+                            </div>
+                            <div>
+                                <div class="mb-1">
+                                    <span class="pr-2">
+                                        <a class="username"
+                                           th:href="@{'/user/' + ${comment.user.id} + '/favourite'}" th:text="${reply.user.username}"></a>
+                                    </span>
+                                    <span th:if="not ${reply.reply}" th:text="${reply.text}"></span>
+                                    <span th:if="${reply.reply}">
+                                        回复
+                                        <a th:href="@{'/user/' + ${reply.reply.user.id} + '/favourite'}"
+                                           th:text="${reply.reply.user.username}"></a>
+                                        <span th:text="':' + ${reply.text}"></span>
+                                    </span>
+                                </div>
+                                <div class="text-muted reply-info">
+                                    <span th:text="${#dates.format(reply.createTime, 'yyyy/MM/dd hh:mm')}"></span>
+                                    <span class="ml-3 btn-reply-wrap"
+                                       th:data="'{&quot;commentId&quot;:' + ${comment.id} + ', &quot;replyId&quot;:' + ${reply.id} + '}'"
+                                        th:href="'#comment' + ${comment.id}">
+                                        回复
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <ul class="list-inline justify-content-end" th:if="${repliesMap[comment.id].pages > 1}"
+                            th:with="replies=${repliesMap[comment.id]}">
+                            <li class="list-inline-item" th:classappend="${not replies.hasPreviousPage} ? 'disabled'">
+                                <span class="pag-reply-prev">上一页
+                                </span>
+                            </li>
+                            <li class="list-inline-item" th:classappend="${now == replies.pageNum} ? 'active'"
+                                th:each="now : ${replies.navigatepageNums}">
+                                <span class="pag-reply"
+                                   th:data="'{&quot;id&quot;:'+${comment.id}+',&quot;pageNum&quot;:'
+                                            +${now}+',&quot;pageSize&quot;:'+${replies.pageSize} + '}'" th:text="${now}">
+                                </span>
+                            </li>
+                            <li class="list-inline-item" th:classappend="${not replies.hasNextPage} ? 'disabled'">
+                                <span class="pag-reply-next">下一页
+                                </span>
+                            </li>
+                        </ul>
+
+                        <div class="comment-area" th:id="'comment' + ${comment.id}"></div>
+                        <div class="comment-area pr-4" sec:authorize="isAnonymous()"></div>
+                    </div>
+                </div>
+                <div class="text-center text-muted mb-4" th:if="${comments.size == 0}">
+                    目前尚未有评论。
+                </div>
+                <div th:replace="nav :: nav-pag-comments"></div>
+                <div th:if="${comments.size > 5}" th:insert=":: comment-comic"></div>
+            </div>
+        </div>
     </div>
 
-
+    <footer class="mt-4"></footer>
 
     <div class="row" hidden="">
         <div th:replace="sidebar :: comic"></div>
@@ -78,7 +185,7 @@
                       th:text="|最近阅读: - ${last_record.chapter.title}卷- ${last_record.page}页|">
                 </span>
             </header>
-            <div th:replace="nav :: nav-pag"></div>
+            <div th:replace="nav :: nav-pag(${pages})"></div>
             <div class="row justify-content-center" id="cards">
                 <div class="mt-3 ml-4" th:each="chapter : ${pages.list}" th:object="${chapter}">
                     <div class="card img-card">
@@ -103,16 +210,26 @@
                     </div>
                 </div>
             </div>
-            <div th:replace="nav :: nav-pag"></div>
+            <div th:replace="nav :: nav-pag(${pages})"></div>
         </div>
     </div>
 </div>
 
-
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
 <script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"></script>
 <script src="/scripts/main.js"></script>
+<script src="/scripts/comment.js"></script>
+<script sec:authorize="!isAnonymous()" th:inline="javascript">
+    /*<![CDATA[*/
+    let user = /*[[${#session.getAttribute('SPRING_SECURITY_CONTEXT').Authentication.Principal}]]*/null;
+    /*]]>*/
+</script>
+<script sec:authorize="isAnonymous()" th:inline="javascript">
+    /*<![CDATA[*/
+    let user = null;
+    /*]]>*/
+</script>
 </body>
 </html>

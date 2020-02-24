@@ -71,6 +71,11 @@ public class ChapterServiceImpl implements ChapterService {
     }
 
     @Override
+    public Chapter findFirstByComicId(Integer comicId) {
+        return chapterMapper.findFirstByComicId(comicId);
+    }
+
+    @Override
     public List<String> findAllTitles() {
         return chapterMapper.findAllTitles();
     }

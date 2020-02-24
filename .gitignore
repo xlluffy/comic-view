@@ -25,6 +25,7 @@
 /.nb-gradle/
 
 ### my ignore ###
-secret.properties
 /log/*.log
 /log/*.zip
+/src/main/resources/static/scripts/jquery-3.4.1.js
+/src/main/resources/static/stylesheets/bootstrap.min.css

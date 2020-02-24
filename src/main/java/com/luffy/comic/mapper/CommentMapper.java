@@ -22,7 +22,7 @@ public interface CommentMapper {
     @Select("select * from comment where id = #{id}")
     Comment findById2(Integer id);
 
-    @Select("select * from comment where comic_id = #{comicId}")
+    @Select("select * from comment where comic_id = #{comicId} order by create_time desc")
     @Results(id = "comicCommentMapper", value = {
             @Result(property = "user", column = "user_id",
                     one = @One(select = "com.luffy.comic.mapper.UserMapper.findById")),
@@ -31,7 +31,7 @@ public interface CommentMapper {
     })
     List<Comment> findByComicId(Integer comicId);
 
-    @Select("select * from comment where user_id = #{userId}")
+    @Select("select * from comment where user_id = #{userId} order by create_time desc")
     @Results(id = "userCommentMapper", value = {
             @Result(property = "replyUser", column = "reply_user_id",
                     one = @One(select = "com.luffy.comic.mapper.UserMapper.findById")),
@@ -40,8 +40,8 @@ public interface CommentMapper {
     })
     List<Comment> findByUserId(Integer userId);
 
-    @Insert("insert into comment(text, user_id, reply_user_id, comic_id) values " +
-            "(#{text}, #{user.id}, #{replyUser.id}, #{comic.id})")
+    @Insert("insert into comment(text, user_id, comic_id) values " +
+            "(#{text}, #{user.id}, #{comic.id})")
     @Options(useGeneratedKeys = true)
     void insert(Comment comment);
 

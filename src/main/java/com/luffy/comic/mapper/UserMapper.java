@@ -11,6 +11,9 @@ public interface UserMapper {
     @Select("select * from user where id = #{id}")
     User findById(Integer id);
 
+    @Select("select id, username, nick_name, icon, note, create_time from user where id = #{id}")
+    User findByIdSecurity(Integer id);
+
     @Select("select * from user where username = #{username}")
     User findByUsername(String username);
 

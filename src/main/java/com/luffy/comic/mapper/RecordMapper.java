@@ -65,7 +65,7 @@ public interface RecordMapper {
     boolean updateByChapterId(Record record);
 
     @Insert("insert into record(user_id, comic_id, chapter_id, page, suffix) values" +
-            "(#{userId}, #{comic.id}, #{chapter.id}, #{page}, #{suffix})")
+            "(#{user.id}, #{comic.id}, #{chapter.id}, #{page}, #{suffix})")
     void insert(Record record);
 
     @Delete("delete from record where id = #{id}")
