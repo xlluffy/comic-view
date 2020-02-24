@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import java.util.Date;
 @Api(tags = "CommentController")
 @Controller
 @RequestMapping("/comment")
+@PreAuthorize("hasRole('ROLE_USER')")
 public class CommentController {
     private static final Log logger = LogFactory.getLog(CommentController.class);
 
@@ -63,7 +65,7 @@ public class CommentController {
         return CommonResult.success(commentReply);
     }
 
-    @ApiOperation("")
+    @ApiOperation("获取评论下的所有回复")
     @GetMapping("{commentId}/replies")
     @ResponseBody
     public CommonResult getReplies(@PathVariable int commentId,
@@ -72,13 +74,13 @@ public class CommentController {
         return CommonResult.success(commentReplyService.findByCommentIdByPage(commentId, pageNum, pageSize));
     }
 
-    @ApiOperation("")
+    @ApiOperation("更新评论")
     @PostMapping("/update")
     public CommonResult update() {
         return CommonResult.success("");
     }
 
-    @ApiOperation("")
+    @ApiOperation("删除评论")
     @DeleteMapping("/delete")
     public CommonResult delete() {
         return CommonResult.success("");
