@@ -2,7 +2,6 @@ package com.luffy.comic.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.luffy.comic.common.api.CommonResult;
-import com.luffy.comic.model.Chapter;
 import com.luffy.comic.model.Comic;
 import com.luffy.comic.service.ChapterService;
 import com.luffy.comic.service.ComicService;
@@ -11,14 +10,13 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
 @Api(tags = "ComicAdminController")
-@Controller
+@RestController
 @RequestMapping("/admin/comic")
 @PreAuthorize("hasRole('ADMIN')")
 public class ComicAdminController {
@@ -34,50 +32,46 @@ public class ComicAdminController {
 
     @ApiOperation("漫画列表")
     @GetMapping("/index")
-    public String list(@RequestParam(name = "orderBy", defaultValue = "createTime") String orderBy,
+    public CommonResult list(@RequestParam(name = "orderBy", defaultValue = "createTime") String orderBy,
                        @RequestParam(name = "asc", defaultValue = "true") boolean asc,
                         @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
-                        @RequestParam(name = "pageSize", defaultValue = "20") int pageSize,
-                        Model model) {
+                        @RequestParam(name = "pageSize", defaultValue = "20") int pageSize) {
         PageInfo<Comic> pages = comicService.findByPage(orderBy, asc, pageNum, pageSize);
         HashMap<Integer, Integer> comicsMap = new HashMap<>();
         for (Comic comic : pages.getList()) {
             comicsMap.put(comic.getId(), chapterService.countByComicId(comic.getId()));
         }
-        model.addAttribute("pages", pages);
-        model.addAttribute("comicsMap", comicsMap);
-        return "admin/comic/index";
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("comics", pages);
+        data.put("comicsMap", comicsMap);
+        return CommonResult.success(data);
     }
 
     @ApiOperation("漫画章节")
     @GetMapping("/{comicId}")
-    public String chapterList(@PathVariable int comicId,
+    public CommonResult chapterList(@PathVariable int comicId,
                               @RequestParam(name = "asc", defaultValue = "true") boolean asc,
                             @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
-                            @RequestParam(name = "pageSize", defaultValue = "20") int pageSize,
-                            Model model) {
-        model.addAttribute("comic", comicService.findById(comicId));
-        PageInfo<Chapter> pages = chapterService.findByComicIdByPage(comicId, asc, pageNum, pageSize);
-        model.addAttribute("pages", pages);
-        return "admin/comic/comic";
+                            @RequestParam(name = "pageSize", defaultValue = "20") int pageSize) {
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("comic", comicService.findById(comicId));
+        data.put("chapters", chapterService.findByComicIdByPage(comicId, asc, pageNum, pageSize));
+        return CommonResult.success(data);
     }
 
     @ApiOperation("添加漫画")
     @PutMapping("/add")
-    @ResponseBody
     @PreAuthorize("hasRole('LADMIN')")
     public CommonResult addComic(@RequestParam String title) {
-        comicService.insertByLocalTitle(title);
-        return CommonResult.success("", "Add comic " + title + " succeed.");
+        Comic comic = comicService.insertByLocalTitle(title);
+        return CommonResult.success(chapterService.countByComicId(comic.getId()));
     }
 
     @ApiOperation("获取可添加漫画列表")
     @GetMapping("/addList")
     @PreAuthorize("hasRole('LADMIN')")
-    public String getAddableComicList(Model model) {
-//        return CommonResult.success(comicService.findAddableLocalComics(), "Get comics list succeed.");
-        model.addAttribute("localComicsMap", comicService.findAddableLocalComics());
-        return "/admin/comic/comic-local";
+    public CommonResult getAddableComicList(Model model) {
+        return CommonResult.success(comicService.findAddableLocalComics());
     }
 
     @ApiOperation("通过id删除漫画")
@@ -86,6 +80,7 @@ public class ComicAdminController {
     public CommonResult deleteComic(@RequestParam int id) {
         // TODO: 添加数据库备份功能
         if (id > 0) {
+//            logger.info("delete comic with id = " + id);
             comicService.deleteById(id);
         }
         return CommonResult.success("", "Delete comic with id = " + id + " succeed.");
@@ -94,16 +89,14 @@ public class ComicAdminController {
 
     @ApiOperation("根据本地目录更新漫画")
     @GetMapping("/update")
-    @ResponseBody
     @PreAuthorize("hasRole('LADMIN')")
     public CommonResult updateComics() {
         comicService.updateLocalAll();
-        return CommonResult.success("", "Update succeed.");
+        return CommonResult.success("", "Update success.");
     }
 
     @ApiOperation("为漫画添加指定章节")
     @PutMapping("/{comicId}/add")
-    @ResponseBody
     @PreAuthorize("hasRole('LADMIN')")
     public CommonResult addChapter(@PathVariable int comicId, @RequestParam String title) {
         chapterService.insertByLocalTitle(comicId, title);
@@ -113,22 +106,26 @@ public class ComicAdminController {
     @ApiOperation("获取可添加漫画章节列表")
     @GetMapping("/{comicId}/addList")
     @PreAuthorize("hasRole('LADMIN')")
-    public String getAddableChapterList(@PathVariable int comicId, Model model) {
-//        Comic comic = comicService.findById(comicId);
-        model.addAttribute("comic", comicService.findById(comicId));
-        model.addAttribute("localChapters", chapterService.findAddableLocalChapter(comicId));
-        return "admin/comic/chapter-local";
-        /*return CommonResult.success(chapterService.findAddableLocalChapter(comicId),
-                "Get chapter of " + comicId + " succeed.");*/
+    public CommonResult getAddableChapterList(@PathVariable int comicId, Model model) {
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("comic", comicService.findById(comicId));
+        data.put("chapters", chapterService.findAddableLocalChapter(comicId));
+        return CommonResult.success(data);
     }
 
     @ApiOperation("删除指定章节")
     @DeleteMapping("/{comicId}/delete")
-    @ResponseBody
     public CommonResult deleteChapter(@PathVariable int comicId, @RequestParam String title) {
         if (title != null) {
             chapterService.deleteByComicIdAndTitle(comicId, title);
         }
-        return CommonResult.success("", "Delete chapter " + title + "succeed.");
+        return CommonResult.success("", "Delete chapter " + title + "success.");
+    }
+
+    @ApiOperation("根据id删除指定章节")
+    @DeleteMapping("/deleteChapter")
+    public CommonResult deleteChapterById(@RequestParam int chapterId) {
+        chapterService.deleteById(chapterId);
+        return CommonResult.success("Delete chapter " + chapterId + "success.");
     }
 }

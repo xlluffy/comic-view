@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
  * 后台管理员service
  */
 public interface UserService {
+    User getById(Integer id);
+
     /**
      * 根据用户名获取用户
      */
@@ -40,7 +42,7 @@ public interface UserService {
      * @param password 密码
      * @return 生成的JWT的token
      */
-    String loginAuth(String username, String password);
+    String loginAuth(String username, String password, boolean rememberMe);
 
     /**
      * 登出

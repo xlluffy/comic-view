@@ -1,3 +1,4 @@
+/*
 package com.luffy.comic.service.impl;
 
 import com.github.pagehelper.PageHelper;
@@ -8,13 +9,15 @@ import com.luffy.comic.nosql.elasticsearch.repository.EsComicRepository;
 import com.luffy.comic.service.EsComicService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-@Service
+//@Service
 public class EsComicServiceImpl implements EsComicService {
     private static final Logger logger = LoggerFactory.getLogger(EsComicServiceImpl.class);
 
@@ -67,8 +70,11 @@ public class EsComicServiceImpl implements EsComicService {
 
     @Override
     public PageInfo<EsComic> searchByTitle(String keyword, Integer pageNum, Integer pageSize) {
-        /*Pageable pageable = PageRequest.of(pagNum, pagSize);
-        return comicRepository.findByTitleOrFullTileOrAuthor(keyword, keyword, keyword, pageable);*/
+        */
+/*Pageable pageable = PageRequest.of(pageNum, pageSize);
+        return comicRepository.findByTitleOrFullTileAndAuthor(keyword, keyword, keyword, pageable);*//*
+
+
         PageHelper.startPage(pageNum, pageSize);
         List<EsComic> comics = comicRepository.findByTitleOrFullTile(keyword, keyword);
         return new PageInfo<>(comics);
@@ -88,3 +94,4 @@ public class EsComicServiceImpl implements EsComicService {
         return new PageInfo<>(comics);
     }
 }
+*/

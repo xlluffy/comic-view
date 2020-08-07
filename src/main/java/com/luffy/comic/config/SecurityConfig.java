@@ -1,7 +1,7 @@
 package com.luffy.comic.config;
 
-import com.luffy.comic.common.utils.CookieUtil;
 import com.luffy.comic.component.JwtAuthenticationTokenFilter;
+import com.luffy.comic.component.RestAuthenticationEntryPoint;
 import com.luffy.comic.component.RestfulAccessDeniedHandler;
 import com.luffy.comic.dto.AdminUserDetails;
 import com.luffy.comic.model.Permission;
@@ -20,12 +20,14 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
@@ -45,36 +47,39 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private UserService userService;
     private UserAdminService userAdminService;
     private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
+    private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     private DataSource dataSource;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf()// 由于使用的是JWT，我们这里不需要csrf
+        httpSecurity.csrf()// 由于使用的是JWT，这里不需要csrf
                 .disable()
-//                .sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and()
-                .formLogin().loginPage("/login").successHandler(loginSuccessHandler())
-//                .failureForwardUrl("/login?error=1")
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .formLogin().loginPage("/login").successForwardUrl("/loginAuth")
+//                .successHandler(loginSuccessHandler())
+                .failureForwardUrl("/loginFailure")
                 .and()
                 .logout().logoutUrl("/logout").logoutSuccessUrl("/login").logoutSuccessHandler(logoutSuccessHandler())
                 .and()
                 .anonymous().key("anonymous").authorities("ROLE_ANONYMOUS")
                 .and()
-                .rememberMe().tokenValiditySeconds(24 * 60 * 60).tokenRepository(getPersistentTokenRepository())
-                .and()
+                /*.rememberMe().tokenValiditySeconds(24 * 60 * 60).tokenRepository(getPersistentTokenRepository())
+                .and()*/
                 .authorizeRequests().antMatchers(HttpMethod.OPTIONS)//跨域请求会先进行一次options请求
                 .permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+//                .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/**").permitAll();
         // 禁用缓存
         httpSecurity.headers().cacheControl();
         // 添加JWT filter
-//        httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         // 添加自定义未授权和未登录结果返回
         httpSecurity.exceptionHandling()
-                .accessDeniedHandler(restfulAccessDeniedHandler);
+                .accessDeniedHandler(restfulAccessDeniedHandler)
+                .authenticationEntryPoint(restAuthenticationEntryPoint);
         httpSecurity.sessionManagement().maximumSessions(10).expiredUrl("/login");
     }
 
@@ -132,11 +137,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             try {
                 User user = (User) authentication.getPrincipal();
                 logger.info("USER: " + user.getUsername() + " LOGOUT SUCCESS.");
-                CookieUtil.removeCookie(httpServletRequest, httpServletResponse, "JSESSIONID");
+//                CookieUtil.removeCookie(httpServletRequest, httpServletResponse, "JSESSIONID");
             } catch (Exception e) {
                 logger.info("LOGOUT EXCEPTION , e : " + e.getMessage());
             }
-                httpServletResponse.sendRedirect("/login");
+//                httpServletResponse.sendRedirect("/login");
         };
     }
 
@@ -146,7 +151,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         jdbcTokenRepositoryImpl.setDataSource(dataSource);
         return jdbcTokenRepositoryImpl;
     }
-//    @Bean
+
+    @Bean
     public JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter(){
         return new JwtAuthenticationTokenFilter();
     }
@@ -170,6 +176,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public void setRestfulAccessDeniedHandler(RestfulAccessDeniedHandler restfulAccessDeniedHandler) {
         this.restfulAccessDeniedHandler = restfulAccessDeniedHandler;
+    }
+
+    @Autowired
+    public void setRestAuthenticationEntryPoint(RestAuthenticationEntryPoint restAuthenticationEntryPoint) {
+        this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
     }
 
     @Autowired

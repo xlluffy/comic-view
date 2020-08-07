@@ -11,6 +11,8 @@ import com.luffy.comic.model.UserLoginLog;
 import com.luffy.comic.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -41,15 +43,17 @@ public class UserServiceImpl implements UserService {
     private String tokenHead;
 
     public UserServiceImpl(UserMapper userMapper, UserLoginLogMapper userLoginLogMapper,
-                           UserDetailsService userDetailService,
                            UserRoleRelationMapper userRoleRelationMapper,
-                           JwtTokenUtil jwtTokenUtil, PasswordEncoder passwordEncoder) {
+                           JwtTokenUtil jwtTokenUtil) {
         this.userMapper = userMapper;
         this.userLoginLogMapper = userLoginLogMapper;
-        this.userDetailService = userDetailService;
         this.userRoleRelationMapper = userRoleRelationMapper;
         this.jwtTokenUtil = jwtTokenUtil;
-        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    public User getById(Integer id) {
+        return userMapper.findById(id);
     }
 
     @Override
@@ -69,6 +73,9 @@ public class UserServiceImpl implements UserService {
         }
         user.setStatus(1);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getIcon() == null) {
+            user.setIcon("/images/face/default.jpg");
+        }
         userMapper.insert(user);
         userRoleRelationMapper.addRoleToUser(user.getId(), "ROLE_USER");
 //        logger.warn("You cannot register an account now.");
@@ -102,18 +109,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String loginAuth(String username, String password) {
+    public String loginAuth(String username, String password, boolean rememberMe) {
         String token = null;
         try {
             UserDetails userDetails = userDetailService.loadUserByUsername(username);
-            if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+            /*if (!passwordEncoder.matches(password, userDetails.getPassword())) {
                 throw new BadCredentialsException("密码不正确");
-            }
+            }*/
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-            token = jwtTokenUtil.generateToken(userDetails);
+            token = jwtTokenUtil.generateToken(userDetails, rememberMe);
         } catch (AuthenticationException e) {
             logger.warn("登陆异常: {}", e.getMessage());
         }
@@ -175,5 +182,15 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(newPwd));
         userMapper.update(user);
         return true;
+    }
+
+    @Autowired
+    public void setUserDetailService(@Qualifier("userDetailsService") UserDetailsService userDetailService) {
+        this.userDetailService = userDetailService;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
     }
 }

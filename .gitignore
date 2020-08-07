@@ -29,3 +29,5 @@
 /log/*.zip
 /src/main/resources/static/scripts/jquery-3.4.1.js
 /src/main/resources/static/stylesheets/bootstrap.min.css
+/src/main/resources/templates/
+/src/main/resources/static/

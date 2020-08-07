@@ -10,6 +10,7 @@ import com.luffy.comic.model.Comic;
 import com.luffy.comic.service.ComicService;
 import com.luffy.comic.tools.Tools;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +24,8 @@ import static com.luffy.comic.tools.Tools.transToPath;
 @Transactional
 public class ComicServiceImpl implements ComicService {
 //    private static final Log logger = LogFactory.getLog(ComicServiceImpl.class);
-    private static final String root = "D:\\Comic";
+    @Value("${comic-root}")
+    private String root;
 
     private ComicMapper comicMapper;
     private ChapterMapper chapterMapper;
@@ -154,8 +156,8 @@ public class ComicServiceImpl implements ComicService {
     }
 
     @Override
-    public void insertByLocalTitle(String title) {
-        Comic comic = new Comic(0, title, title, "No one");
+    public Comic insertByLocalTitle(String title) {
+        Comic comic = new Comic(0, title, title, null);
         this.insertOrUpdate(comic);
 
         String[] chapters = new File(transToPath(root, title)).list();
@@ -169,6 +171,7 @@ public class ComicServiceImpl implements ComicService {
             }
             chapterMapper.insertOrUpdateBatch(chapterList);
         }
+        return comic;
     }
 
     @Override

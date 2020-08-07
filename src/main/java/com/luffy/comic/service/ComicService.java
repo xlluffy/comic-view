@@ -44,7 +44,7 @@ public interface ComicService {
 
     HashMap<Integer, Boolean> findFavouriteFromComics(Integer userId, List<Comic> comics);
 
-    void insertByLocalTitle(String title);
+    Comic insertByLocalTitle(String title);
 
     void insertOrUpdate(Comic comic);
 

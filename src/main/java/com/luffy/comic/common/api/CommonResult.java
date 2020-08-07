@@ -45,8 +45,8 @@ public class CommonResult<T> {
      * 失败返回结果
      * @param message 提示信息
      */
-    public static <T> CommonResult<T> failed(String message) {
-        return new CommonResult<>(ResultCode.FAILED.getCode(), message, null);
+    public static <T> CommonResult<String> failed(String message) {
+        return new CommonResult<>(ResultCode.FAILED.getCode(), message, message);
     }
 
     /**

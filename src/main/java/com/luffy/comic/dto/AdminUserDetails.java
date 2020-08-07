@@ -17,6 +17,10 @@ public class AdminUserDetails extends User implements UserDetails {
     private List<Permission> permissionList;
     private List<String> roleList;
 
+    public AdminUserDetails() {
+
+    }
+
     public AdminUserDetails(User user, List<Permission> permissionList, List<String> roleList) {
         super(user);
         this.permissionList = permissionList;

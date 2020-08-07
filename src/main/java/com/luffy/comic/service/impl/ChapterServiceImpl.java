@@ -8,6 +8,7 @@ import com.luffy.comic.model.Chapter;
 import com.luffy.comic.model.Comic;
 import com.luffy.comic.service.ChapterService;
 import com.luffy.comic.tools.Tools;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +24,8 @@ import static com.luffy.comic.tools.Tools.transToPath;
 @Transactional
 public class ChapterServiceImpl implements ChapterService {
 //    private static final Log logger = LogFactory.getLog(ComicMapperImpl.class);
-    private static final String root = "D:\\Comic";
+    @Value("${comic-root}")
+    private String root;
 
     private ChapterMapper chapterMapper;
     private ComicMapper comicMapper;
@@ -64,7 +66,7 @@ public class ChapterServiceImpl implements ChapterService {
                     map(Chapter::getTitle).collect(Collectors.toSet());
             Set<String> localTitles = Arrays.stream(titles).
                     filter(o -> new File(transToPath(root, comicTitle, o)).isDirectory()).collect(Collectors.toSet());
-            localTitles.removeAll(remoteTitles);
+            localTitles.removeAll(remoteTitles); // 需要排序
             return localTitles;
         }
         return null;
