@@ -87,7 +87,6 @@ public class RecordController {
                     }
                 }
             }
-
         }
         return CommonResult.validateFailed();
     }
