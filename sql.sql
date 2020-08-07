@@ -82,6 +82,7 @@ create table if not exists user(
     unique (email),
     unique (username)
 );
+-- 密码均为123456
 insert into user(username, password, email, nick_name) values
                 ('luffy', '$2a$10$rMhxctqzDUaKyoOglIVqR.P/QKPTQ4uPhZQpZ.fVFMYuPdy8q2aF6', 'god@mail.com', 'monkey'),
                 ('admin', '$2a$10$E5Exa0M3MRlEBp/bsd5WQOBDHavD7KaQ4xb6oTXdcbPEEjwjwogsW', 'youremail@mail.com', 'admin');
